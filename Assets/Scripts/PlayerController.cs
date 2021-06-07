@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private Animator m_animator;
     private Rigidbody2D m_rbody2D;
     private SpriteRenderer m_spriteRenderer;
+    private PlayerStats m_playerStats;
     private bool m_isRolling = false;
     private int m_direction = 1;
     private int m_currentAttack = 0;
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
         m_animator = GetComponent<Animator>();
         m_rbody2D = GetComponent<Rigidbody2D>();
         m_spriteRenderer = GetComponent<SpriteRenderer>();
+        m_playerStats = GetComponent<PlayerStats>();
     }
 
     void Update()
@@ -47,16 +49,10 @@ public class PlayerController : MonoBehaviour
             m_rbody2D.velocity = new Vector2(inputY * m_speed, m_rbody2D.velocity.y);
             m_rbody2D.velocity = new Vector2(inputX * m_speed, m_rbody2D.velocity.x);
         }
-
-        //Death, momentan pt testing
-        if (Input.GetKeyDown("e") && !m_isRolling)
-        {
-            m_animator.SetTrigger("Death");
-        }
         //Hurt, momentan pt testing
         if (Input.GetKeyDown("q") && !m_isRolling)
         {
-            m_animator.SetTrigger("Hurt");
+            m_playerStats.TakeDmg(20);
         }
         //Attack
         else if (Input.GetMouseButtonDown(0) && m_timeSienceAttack > 0.25f && !m_isRolling)
