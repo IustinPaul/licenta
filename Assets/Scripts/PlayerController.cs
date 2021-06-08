@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
             m_playerStats.TakeDmg(20);
         }
         //Attack
-        else if (Input.GetMouseButtonDown(0) && m_timeSienceAttack > 0.25f && !m_isRolling)
+        else if (Input.GetMouseButtonDown(0) && m_timeSienceAttack > 0.25f && !m_isRolling && m_playerStats.CanAttack())
         {
             m_currentAttack++;
 
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
             m_animator.SetBool("IdleBlock", false);
 
         //Roll
-        else if (Input.GetKeyDown("left shift") && !m_isRolling)
+        else if (Input.GetKeyDown("left shift") && !m_isRolling && m_playerStats.CanUseRoll())
         {
             m_isRolling = true;
             m_animator.SetTrigger("Roll");
