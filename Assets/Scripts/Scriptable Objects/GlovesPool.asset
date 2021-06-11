@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e177cd625c4664c41b3b03a978ec8a91, type: 3}
+  m_Name: GlovesPool
+  m_EditorClassIdentifier: 
+  ItemType: Gloves
+  BaseStats:
+  - ApplyTo: Armor
+    Amount: 1
+  - ApplyTo: Crit. Chance
+    Amount: 0.1%
+  Sprites:
+  - {fileID: 4639506938558671751, guid: 7c6a138393e3e4a48927c333df194f6a, type: 3}
+  Effects:
+  - ApplyTo: Armor
+    Amount: 10
+  - ApplyTo: Armor
+    Amount: 0.5%
+  - ApplyTo: Life
+    Amount: 10
+  - ApplyTo: Life
+    Amount: 0.5%
+  - ApplyTo: Stamina
+    Amount: 10
+  - ApplyTo: Stamina
+    Amount: 0.5%
+  - ApplyTo: Attack Cost
+    Amount: -0.5%
+  - ApplyTo: Crit. Chance
+    Amount: 0.5%
+  - ApplyTo: Block Cost
+    Amount: -0.5%

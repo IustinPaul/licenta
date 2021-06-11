@@ -8,7 +8,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float m_totalLife = 100.0f;
     [SerializeField] private float m_attackDmg = 10.0f;
     [SerializeField] private float m_totalStamina = 100.0f;
-    [SerializeField] private float m_delayDmgTaken = 1.0f;
+    [SerializeField] private float m_Invulnerability = 1.0f;
     [SerializeField] private float m_lifeRegenPerSec = 0.0f;
     [SerializeField] private float m_staminaRegenPerSec = 5.0f;
     [SerializeField] private float m_rollStaminaCost = 20.0f;
@@ -27,6 +27,23 @@ public class PlayerStats : MonoBehaviour
     private float m_currentStamina = 100.0f;
     private float m_armor = 1.0f;
     private float m_timeSinceDmg;
+
+    private float m_bonusLife;
+    private float m_bonusStamina;
+    private float m_bonusArmor;
+    private float m_bonusRollCost;
+    private float m_bonusStaminaRegen;
+    private float m_bonusSpeed;
+    private float m_bonusInvulnerability;
+    private float m_bonusLifeRegen;
+    private float m_bonusAttackCost;
+    private float m_bonusCritChance;
+    private float m_bonusBlockCost;
+    private float m_bonusThorns;
+    private float m_bonusAttackDmg;
+    private float m_bonusBleedDmg;
+    private float m_bonusBleedChance;
+
     void Awake()
     {
         m_animator = GetComponent<Animator>();
@@ -35,7 +52,7 @@ public class PlayerStats : MonoBehaviour
         m_lifeBarImage = m_lifeBar.GetComponent<Image>();
         m_maxSizeLifeBar = m_lifeBar.rect.width;
         m_maxSizeStaminaBar = m_staminaBar.rect.width;
-        m_timeSinceDmg = m_delayDmgTaken;
+        m_timeSinceDmg = m_Invulnerability;
     }
 
     void Update()
@@ -61,7 +78,7 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDmg(float dmg)
     {
-        if(m_timeSinceDmg > m_delayDmgTaken)
+        if(m_timeSinceDmg > m_Invulnerability)
         {
             m_currentLife -= dmg / m_armor;
             UpdateLifeBar();
@@ -71,7 +88,7 @@ public class PlayerStats : MonoBehaviour
                 m_animator.SetTrigger("Death");
 
                 //Problem: Sliding after death if it was moving
-                GetComponent<PlayerController>().enabled = false;
+                GetComponent<PlayerController>().CanMove = false;
             }
             else
             {
@@ -103,6 +120,27 @@ public class PlayerStats : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void UpdateBonusStats(Item[] items)
+    {
+        float lifeProcent = 0;
+        float staminaProcent = 0;
+        float armorProcent = 0;
+        float rollCostProcent = 0;
+        float staminaRegenProcent = 0;
+        float speedProcent = 0;
+        float invulnerabilityProcent = 0;
+        float lifeRegenProcent = 0;
+        float attackCostProcent = 0;
+        float blockCostProcent = 0;
+        float bleedDmgProcent = 0;
+        float attackDmgProcent = 0;
+
+        foreach(var v in items)
+        {
+            //de facut
+        }
     }
 
     private void UpdateLifeBar()
