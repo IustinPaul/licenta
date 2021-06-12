@@ -9,6 +9,7 @@ public class InventoryController : MonoBehaviour
     [SerializeField] private int m_inventoryWidth;
     [SerializeField] private GameObject m_selector;
     [SerializeField] private PlayerController m_playerController;
+    [SerializeField] private PlayerStats m_playerStats;
     private int m_selectorX = 0;
     private int m_selectorY = 0;
     private Item[,] m_inventory;
@@ -61,6 +62,7 @@ public class InventoryController : MonoBehaviour
             if(m_inventory[m_selectorY,m_selectorX].Name != "")
             {
                 EquipItem(m_inventory[m_selectorY, m_selectorX]);
+                m_playerStats.UpdateBonusStats(m_equiped);
             }
         }
 

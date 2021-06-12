@@ -8,11 +8,13 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float m_totalLife = 100.0f;
     [SerializeField] private float m_attackDmg = 10.0f;
     [SerializeField] private float m_totalStamina = 100.0f;
-    [SerializeField] private float m_Invulnerability = 1.0f;
-    [SerializeField] private float m_lifeRegenPerSec = 0.0f;
-    [SerializeField] private float m_staminaRegenPerSec = 5.0f;
+    [SerializeField] private float m_invulnerability = 1.0f;
+    [SerializeField] private float m_lifeProcRegenPerSec = 0.0f;
+    [SerializeField] private float m_staminaProcRegenPerSec = 5.0f;
     [SerializeField] private float m_rollStaminaCost = 20.0f;
     [SerializeField] private float m_attackStaminaCost = 10.0f;
+    [SerializeField] private float m_bleedDmg = 0.0f;
+
     [SerializeField] private Color m_highLife;
     [SerializeField] private Color m_mediumLife;
     [SerializeField] private Color m_lowLife;
@@ -21,6 +23,7 @@ public class PlayerStats : MonoBehaviour
     private RectTransform m_lifeBar;
     private RectTransform m_staminaBar;
     private Image m_lifeBarImage;
+
     private float m_maxSizeLifeBar;
     private float m_maxSizeStaminaBar;
     private float m_currentLife = 100.0f;
@@ -31,18 +34,19 @@ public class PlayerStats : MonoBehaviour
     private float m_bonusLife;
     private float m_bonusStamina;
     private float m_bonusArmor;
-    private float m_bonusRollCost;
-    private float m_bonusStaminaRegen;
-    private float m_bonusSpeed;
-    private float m_bonusInvulnerability;
-    private float m_bonusLifeRegen;
-    private float m_bonusAttackCost;
     private float m_bonusCritChance;
-    private float m_bonusBlockCost;
-    private float m_bonusThorns;
     private float m_bonusAttackDmg;
     private float m_bonusBleedDmg;
     private float m_bonusBleedChance;
+
+    private float m_bonusRollCostProc;
+    private float m_bonusStaminaProcRegen;
+    private float m_bonusSpeedProc;
+    private float m_bonusInvulnerabilityProc;
+    private float m_bonusLifeProcRegen;
+    private float m_bonusAttackCostProc;
+    private float m_bonusBlockCostProc;
+    private float m_bonusThornsProc;
 
     void Awake()
     {
@@ -52,7 +56,7 @@ public class PlayerStats : MonoBehaviour
         m_lifeBarImage = m_lifeBar.GetComponent<Image>();
         m_maxSizeLifeBar = m_lifeBar.rect.width;
         m_maxSizeStaminaBar = m_staminaBar.rect.width;
-        m_timeSinceDmg = m_Invulnerability;
+        m_timeSinceDmg = m_invulnerability;
     }
 
     void Update()
@@ -60,16 +64,16 @@ public class PlayerStats : MonoBehaviour
         float dt = Time.deltaTime;
         m_timeSinceDmg += Time.deltaTime;
 
-        m_currentLife += m_lifeRegenPerSec * dt;
-        if(m_currentLife > m_totalLife)
+        m_currentLife += (m_totalLife + m_bonusLife)*(m_lifeProcRegenPerSec + m_bonusLifeProcRegen) / 100.0f * dt;
+        if(m_currentLife > m_totalLife + m_bonusLife)
         {
-            m_currentLife = m_totalLife;
+            m_currentLife = m_totalLife + m_bonusLife;
         }
 
-        m_currentStamina += m_staminaRegenPerSec * dt;
-        if(m_currentStamina > m_totalStamina)
+        m_currentStamina += (m_totalStamina + m_bonusStamina) * (m_staminaProcRegenPerSec + m_bonusStaminaProcRegen) /100.0f * dt;
+        if(m_currentStamina > m_totalStamina + m_bonusStamina)
         {
-            m_currentStamina = m_totalStamina;
+            m_currentStamina = m_totalStamina + m_bonusStamina;
         }
 
         UpdateLifeBar();
@@ -78,16 +82,15 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDmg(float dmg)
     {
-        if(m_timeSinceDmg > m_Invulnerability)
+        if(m_timeSinceDmg > m_invulnerability)
         {
-            m_currentLife -= dmg / m_armor;
+            m_currentLife -= dmg / (m_armor + m_bonusArmor);
             UpdateLifeBar();
             m_timeSinceDmg = 0;
             if(m_currentLife <= 0)
             {
                 m_animator.SetTrigger("Death");
 
-                //Problem: Sliding after death if it was moving
                 GetComponent<PlayerController>().CanMove = false;
             }
             else
@@ -96,25 +99,24 @@ public class PlayerStats : MonoBehaviour
             }
         }
     }
-
     public bool CanUseRoll()
     {
-        if (m_currentStamina >= m_rollStaminaCost)
+        float cost = m_rollStaminaCost - m_rollStaminaCost * m_bonusRollCostProc / 100.0f;
+        if (m_currentStamina >= cost)
         {
-            m_currentStamina -= m_rollStaminaCost;
+            m_currentStamina -= cost;
             UpdateStaminaBar();
             return true;
         }
 
         return false;
     }
-
     public bool CanAttack()
     {
-
-        if (m_currentStamina >= m_attackStaminaCost)
+        float cost = m_attackStaminaCost - m_attackStaminaCost * m_bonusAttackCostProc / 100.0f;
+        if (m_currentStamina >= cost)
         {
-            m_currentStamina -= m_attackStaminaCost;
+            m_currentStamina -= cost;
             UpdateStaminaBar();
             return true;
         }
@@ -127,25 +129,133 @@ public class PlayerStats : MonoBehaviour
         float lifeProcent = 0;
         float staminaProcent = 0;
         float armorProcent = 0;
-        float rollCostProcent = 0;
-        float staminaRegenProcent = 0;
-        float speedProcent = 0;
-        float invulnerabilityProcent = 0;
-        float lifeRegenProcent = 0;
-        float attackCostProcent = 0;
-        float blockCostProcent = 0;
         float bleedDmgProcent = 0;
         float attackDmgProcent = 0;
 
+        m_bonusLife = 0;
+        m_bonusStamina = 0;
+        m_bonusArmor = 0;
+        m_bonusRollCostProc = 0;
+        m_bonusStaminaProcRegen = 0;
+        m_bonusSpeedProc = 0;
+        m_bonusInvulnerabilityProc = 0;
+        m_bonusLifeProcRegen = 0;
+        m_bonusAttackCostProc = 0;
+        m_bonusCritChance = 0;
+        m_bonusBlockCostProc = 0;
+        m_bonusThornsProc = 0;
+        m_bonusAttackDmg = 0;
+        m_bonusBleedDmg = 0;
+        m_bonusBleedChance = 0;
+
         foreach(var v in items)
         {
-            //de facut
+            foreach(var effect in v.BaseStats)
+            {
+                AddToStats(effect);
+            }
+            foreach(var effect in v.Effects)
+            {
+                AddToStats(effect);
+            }
+        }
+
+        m_bonusLife += (m_totalLife + m_bonusLife) * lifeProcent / 100.0f;
+        m_bonusStamina += (m_totalStamina + m_bonusStamina) * staminaProcent / 100.0f;
+        m_bonusArmor += (m_bonusArmor + m_armor) * armorProcent / 100.0f;
+        m_bonusBleedDmg += (m_bonusBleedDmg + m_bleedDmg) * bleedDmgProcent / 100.0f;
+        m_bonusAttackDmg += (m_bonusAttackDmg + m_attackDmg) * attackDmgProcent / 100.0f;
+
+        void AddToStats(Effect effect)
+        {
+            switch (effect.ApplyTo)
+            {
+                case "Armor":
+                    if (effect.Amount.Contains("%"))
+                    {
+                        armorProcent += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    }
+                    else
+                    {
+                        m_bonusArmor += float.Parse(effect.Amount);
+                    }
+                    break;
+                case "Life":
+                    if (effect.Amount.Contains("%"))
+                    {
+                        lifeProcent += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    }
+                    else
+                    {
+                        m_bonusLife += float.Parse(effect.Amount);
+                    }
+                    break;
+                case "Life Regen":
+                    m_bonusLifeProcRegen += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Stamina":
+                    if (effect.Amount.Contains("%"))
+                    {
+                        staminaProcent += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    }
+                    else
+                    {
+                        m_bonusStamina += float.Parse(effect.Amount);
+                    }
+                    break;
+                case "Stamina Regen":
+                    m_bonusStaminaProcRegen += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Roll Cost":
+                    m_bonusRollCostProc += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Attack Cost":
+                    m_bonusAttackCostProc += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Block Cost":
+                    m_bonusBlockCostProc += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Crit. Chance":
+                    m_bonusCritChance += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Bleed Chance":
+                    m_bonusBleedChance += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Attack Dmg.":
+                    if (effect.Amount.Contains("%"))
+                    {
+                        attackDmgProcent += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    }
+                    else
+                    {
+                        m_bonusAttackDmg += float.Parse(effect.Amount);
+                    }
+                    break;
+                case "Bleed Dmg.":
+                    if (effect.Amount.Contains("%"))
+                    {
+                        bleedDmgProcent += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    }
+                    else
+                    {
+                        m_bonusBleedDmg += float.Parse(effect.Amount);
+                    }
+                    break;
+                case "Speed":
+                    m_bonusSpeedProc += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                case "Invulnerability":
+                    m_bonusInvulnerabilityProc += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
     private void UpdateLifeBar()
     {
-        m_lifeBar.sizeDelta= new Vector2(m_maxSizeLifeBar / m_totalLife * m_currentLife, m_lifeBar.rect.height);
+        m_lifeBar.sizeDelta= new Vector2(m_maxSizeLifeBar / (m_totalLife + m_bonusLife) * m_currentLife, m_lifeBar.rect.height);
         if(m_maxSizeLifeBar/2 < m_lifeBar.rect.width)
         {
             m_lifeBarImage.color = m_highLife;
@@ -164,6 +274,6 @@ public class PlayerStats : MonoBehaviour
 
     private void UpdateStaminaBar()
     {
-        m_staminaBar.sizeDelta = new Vector2(m_maxSizeStaminaBar / m_totalStamina * m_currentStamina, m_staminaBar.rect.height);
+        m_staminaBar.sizeDelta = new Vector2(m_maxSizeStaminaBar / (m_totalStamina + m_bonusStamina) * m_currentStamina, m_staminaBar.rect.height);
     }
 }

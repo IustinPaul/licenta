@@ -24,7 +24,7 @@ public class BaseEnemy : MonoBehaviour
     [ContextMenu("DropItem")]
     public void DropItem()
     {
-        if(m_dropChance <= Random.Range(1, 101))
+        if(m_dropChance >= Random.Range(1, 101))
         {
             Item item = Instantiate(m_droppable, transform.position, transform.rotation).GetComponent<Item>();
 
