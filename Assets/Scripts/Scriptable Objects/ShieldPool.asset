@@ -30,7 +30,7 @@ MonoBehaviour:
   - ApplyTo: Thorns
     Amount: 0.5%
   - ApplyTo: Block Cost
-    Amount: -0.5%
+    Amount: 0.5%
   - ApplyTo: Life
     Amount: 0.5%
   - ApplyTo: Life

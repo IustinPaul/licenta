@@ -18,11 +18,13 @@ MonoBehaviour:
     Amount: 5
   - ApplyTo: Bleed Chance
     Amount: 0.1%
+  - ApplyTo: Bleed Dmg.
+    Amount: 1
   Sprites:
   - {fileID: 1801263428120863714, guid: 7c6a138393e3e4a48927c333df194f6a, type: 3}
   Effects:
   - ApplyTo: Attack Cost
-    Amount: -0.5%
+    Amount: 0.5%
   - ApplyTo: Attack Dmg.
     Amount: 1
   - ApplyTo: Attack Dmg.
@@ -32,4 +34,4 @@ MonoBehaviour:
   - ApplyTo: Bleed Chance
     Amount: 0.5%
   - ApplyTo: Bleed Dmg.
-    Amount: 1
+    Amount: 0.5%

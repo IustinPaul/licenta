@@ -31,6 +31,8 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorX = 0;
             }
+            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -40,6 +42,8 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorX = m_inventoryWidth - 1;
             }
+            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -48,6 +52,8 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorY = 0;
             }
+            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -56,6 +62,8 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorY = m_inventoryHeigth - 1;
             }
+            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
@@ -65,9 +73,17 @@ public class InventoryController : MonoBehaviour
                 m_playerStats.UpdateBonusStats(m_equiped);
             }
         }
+        else if (Input.GetKeyDown(KeyCode.Q))
+        {
+            var obj = m_selector.transform.GetChild(0).gameObject;
+            obj.active = !obj.active;
+        }
 
-        m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
+    }
 
+    private void OnEnable()
+    {
+        SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
     }
 
     public void Initialized()
@@ -132,7 +148,7 @@ public class InventoryController : MonoBehaviour
         Image img = itemSlot.transform.GetChild(0).GetComponent<Image>();
         if (itemSlot.PosInInv == item)
         {
-            //Scoate E ul de la itemul echipat
+            item.transform.GetChild(1).gameObject.SetActive(false);
             img.sprite = null;
             img.gameObject.SetActive(false);
             itemSlot.Name = "";
@@ -144,13 +160,13 @@ public class InventoryController : MonoBehaviour
         }
         else
         {
-            if(itemSlot != null)
+            if(itemSlot.PosInInv != null)
             {
-                //Scoate E ul de la itemul echipat
+                itemSlot.PosInInv.transform.GetChild(1).gameObject.SetActive(false);
                 itemSlot.BaseStats.Clear();
                 itemSlot.Effects.Clear();
             }
-            //Pune E ul pe noul item
+            item.transform.GetChild(1).gameObject.SetActive(true);
             img.sprite = item.Sprite;
             img.gameObject.SetActive(true);
             itemSlot.Name = item.Name;
@@ -166,6 +182,29 @@ public class InventoryController : MonoBehaviour
             }
             itemSlot.PosInInv = item;
         }
+    }
+
+    private void SetItemInfo(Item item)
+    {
+        string txt1 = "Base stats\n";
+        string txt2 = "\n";
+
+        foreach(var v in item.BaseStats)
+        {
+            txt1 += v.ApplyTo + "\n";
+            txt2 += v.Amount + "\n";
+        }
+        txt1 += "\nSpecials\n";
+        txt2 += "\n\n";
+        foreach(var v in item.Effects)
+        {
+
+            txt1 += v.ApplyTo + "\n";
+            txt2 += v.Amount + "\n";
+        }
+
+        m_selector.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = txt1;
+        m_selector.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = txt2;
     }
 
     public bool AddToInventory(Item item)

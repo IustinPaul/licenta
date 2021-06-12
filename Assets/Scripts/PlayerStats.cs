@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
+    [SerializeField] private Text m_statsValueTxt;
+
     [SerializeField] private float m_totalLife = 100.0f;
     [SerializeField] private float m_attackDmg = 10.0f;
     [SerializeField] private float m_totalStamina = 100.0f;
@@ -14,6 +16,9 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float m_rollStaminaCost = 20.0f;
     [SerializeField] private float m_attackStaminaCost = 10.0f;
     [SerializeField] private float m_bleedDmg = 0.0f;
+    [SerializeField] private float m_critChance = 0.0f;
+    [SerializeField] private float m_bleedChance = 0.0f;
+    [SerializeField] private float m_thorns = 0.0f;
 
     [SerializeField] private Color m_highLife;
     [SerializeField] private Color m_mediumLife;
@@ -30,6 +35,7 @@ public class PlayerStats : MonoBehaviour
     private float m_currentStamina = 100.0f;
     private float m_armor = 1.0f;
     private float m_timeSinceDmg;
+    private int m_level = 1;
 
     private float m_bonusLife;
     private float m_bonusStamina;
@@ -57,6 +63,7 @@ public class PlayerStats : MonoBehaviour
         m_maxSizeLifeBar = m_lifeBar.rect.width;
         m_maxSizeStaminaBar = m_staminaBar.rect.width;
         m_timeSinceDmg = m_invulnerability;
+        UpdateStatsValueText();
     }
 
     void Update()
@@ -165,6 +172,7 @@ public class PlayerStats : MonoBehaviour
         m_bonusArmor += (m_bonusArmor + m_armor) * armorProcent / 100.0f;
         m_bonusBleedDmg += (m_bonusBleedDmg + m_bleedDmg) * bleedDmgProcent / 100.0f;
         m_bonusAttackDmg += (m_bonusAttackDmg + m_attackDmg) * attackDmgProcent / 100.0f;
+        UpdateStatsValueText();
 
         void AddToStats(Effect effect)
         {
@@ -247,10 +255,34 @@ public class PlayerStats : MonoBehaviour
                 case "Invulnerability":
                     m_bonusInvulnerabilityProc += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
                     break;
+                case "Thorns":
+                    m_bonusThornsProc += float.Parse(effect.Amount.Remove(effect.Amount.Length - 1));
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+    private void UpdateStatsValueText()
+    {
+        string level = m_level.ToString()+"\n";
+        string life = (m_totalLife + m_bonusLife).ToString("0") + "\n";
+        string lifeRegen = (m_lifeProcRegenPerSec + m_bonusLifeProcRegen).ToString("0.0") + " hp/s\n";
+        string stamina = (m_totalStamina + m_bonusStamina).ToString("0") + "\n";
+        string staminaRegen = (m_staminaProcRegenPerSec + m_bonusStaminaProcRegen).ToString("0.0") + " sp/s\n";
+        string armor = (m_armor + m_bonusArmor).ToString("0") + "\n";
+        string attackDmg = (m_attackDmg + m_bonusAttackDmg).ToString("0.0") + "\n";
+        string critChance = (m_critChance + m_bonusCritChance).ToString("0.0") + "%\n";
+        string bleedDmg = (m_bleedDmg + m_bonusBleedDmg).ToString("0.0") + "\n";
+        string bleedChance = (m_bleedChance + m_bonusBleedChance).ToString("0.0") + "%\n";
+        string attackCost = m_bonusAttackCostProc.ToString("0.0") + "%\n";
+        string rollCost = m_bonusRollCostProc.ToString("0.0") + "%\n";
+        string blockCost = m_bonusBlockCostProc.ToString("0.0") + "%\n";
+        string invulnerability = m_bonusInvulnerabilityProc.ToString("0.0") + "%\n";
+        string thornsDmg = (m_thorns + m_bonusThornsProc).ToString("0.0") + "%";
+
+        m_statsValueTxt.text = level + life + lifeRegen + stamina + staminaRegen + armor + attackDmg + critChance + bleedDmg + bleedChance + attackCost + rollCost + blockCost + invulnerability + thornsDmg;
     }
 
     private void UpdateLifeBar()

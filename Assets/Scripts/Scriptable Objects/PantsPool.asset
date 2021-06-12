@@ -34,7 +34,7 @@ MonoBehaviour:
   - ApplyTo: Stamina
     Amount: 0.5%
   - ApplyTo: Roll Cost
-    Amount: -0.5%
+    Amount: 0.5%
   - ApplyTo: Stamina Regen
     Amount: 0.5%
   - ApplyTo: Speed

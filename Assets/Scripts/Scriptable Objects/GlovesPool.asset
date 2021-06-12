@@ -34,8 +34,8 @@ MonoBehaviour:
   - ApplyTo: Stamina
     Amount: 0.5%
   - ApplyTo: Attack Cost
-    Amount: -0.5%
+    Amount: 0.5%
   - ApplyTo: Crit. Chance
     Amount: 0.5%
   - ApplyTo: Block Cost
-    Amount: -0.5%
+    Amount: 0.5%
