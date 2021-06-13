@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
                 m_playerStats.TakeDmg(20);
             }
             //Attack
-            else if (Input.GetMouseButtonDown(0) && m_timeSienceAttack > 0.25f && !m_isRolling && m_playerStats.CanAttack())
+            else if (Input.GetKeyDown(KeyCode.Space) && m_timeSienceAttack > 0.25f && !m_isRolling && m_playerStats.CanAttack())
             {
                 m_currentAttack++;
 
@@ -98,20 +98,20 @@ public class PlayerController : MonoBehaviour
             }
 
             //Block
-            else if (Input.GetMouseButtonDown(1) && !m_isRolling && m_playerStats.CanBlock())
+            else if (Input.GetKeyDown(KeyCode.C) && !m_isRolling && m_playerStats.CanBlock())
             {
                 m_animator.SetTrigger("Block");
                 m_animator.SetBool("IdleBlock", true);
                 m_isBlocking = true;
             }
-            else if (Input.GetMouseButtonUp(1) || (m_isBlocking && !m_playerStats.CanBlock()))
+            else if (Input.GetKeyUp(KeyCode.C) || (m_isBlocking && !m_playerStats.CanBlock()))
             {
                 m_animator.SetBool("IdleBlock", false);
                 m_isBlocking = false;
             }
 
             //Roll
-            else if (Input.GetKeyDown("left shift") && !m_isRolling && m_playerStats.CanUseRoll())
+            else if (Input.GetKeyDown(KeyCode.LeftShift) && !m_isRolling && m_playerStats.CanUseRoll())
             {
                 m_isRolling = true;
                 m_animator.SetTrigger("Roll");
