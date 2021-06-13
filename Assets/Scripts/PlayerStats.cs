@@ -19,6 +19,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float m_critChance = 0.0f;
     [SerializeField] private float m_bleedChance = 0.0f;
     [SerializeField] private float m_thorns = 0.0f;
+    [SerializeField] private float m_blockStaminaCost = 40.0f;
 
     [SerializeField] private Color m_highLife;
     [SerializeField] private Color m_mediumLife;
@@ -91,18 +92,27 @@ public class PlayerStats : MonoBehaviour
     {
         if(m_timeSinceDmg > m_invulnerability)
         {
-            m_currentLife -= dmg / (m_armor + m_bonusArmor);
-            UpdateLifeBar();
-            m_timeSinceDmg = 0;
-            if(m_currentLife <= 0)
+            if (m_animator.GetBool("IdleBlock"))
             {
-                m_animator.SetTrigger("Death");
-
-                GetComponent<PlayerController>().CanMove = false;
+                m_animator.SetTrigger("AttackBlocked");
+                m_currentStamina -= m_blockStaminaCost - m_blockStaminaCost * m_bonusBlockCostProc / 100.0f;
+                UpdateStaminaBar();
             }
             else
             {
-                m_animator.SetTrigger("Hurt");
+                m_currentLife -= dmg / (m_armor + m_bonusArmor);
+                UpdateLifeBar();
+                m_timeSinceDmg = 0;
+                if (m_currentLife <= 0)
+                {
+                    m_animator.SetTrigger("Death");
+
+                    GetComponent<PlayerController>().CanMove = false;
+                }
+                else
+                {
+                    m_animator.SetTrigger("Hurt");
+                }
             }
         }
     }
@@ -128,6 +138,16 @@ public class PlayerStats : MonoBehaviour
             return true;
         }
 
+        return false;
+    }
+
+    public bool CanBlock()
+    {
+        float cost = m_blockStaminaCost - m_blockStaminaCost * m_bonusBlockCostProc / 100.0f;
+        if (m_currentStamina >= cost)
+        {
+            return true;
+        }
         return false;
     }
 

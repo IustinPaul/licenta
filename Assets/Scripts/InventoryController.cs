@@ -12,6 +12,7 @@ public class InventoryController : MonoBehaviour
     [SerializeField] private PlayerStats m_playerStats;
     private int m_selectorX = 0;
     private int m_selectorY = 0;
+    private float m_toDestroy = 0;
     private Item[,] m_inventory;
     private Item[] m_equiped;
 
@@ -23,6 +24,29 @@ public class InventoryController : MonoBehaviour
             gameObject.SetActive(false);
         }
 
+        if (Input.GetKey(KeyCode.W) && m_inventory[m_selectorY, m_selectorX].Name != "" && 
+            !m_inventory[m_selectorY, m_selectorX].transform.GetChild(1).gameObject.activeSelf)
+        {
+            m_toDestroy += Time.deltaTime;
+            if (m_toDestroy > 1)
+            {
+                Item item = m_inventory[m_selectorY, m_selectorX];
+                Image img = item.transform.GetChild(0).GetComponent<Image>();
+                img.sprite = null;
+                img.gameObject.SetActive(false);
+                item.Name = "";
+                item.Level = 0;
+                item.Sprite = null;
+                item.BaseStats.Clear();
+                item.Effects.Clear();
+                item.PosInInv = null;
+                SetItemInfo(item);
+            }
+        }
+        else
+        {
+            m_toDestroy = 0;
+        }
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -76,7 +100,7 @@ public class InventoryController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Q))
         {
             var obj = m_selector.transform.GetChild(0).gameObject;
-            obj.active = !obj.active;
+            obj.SetActive(!obj.activeSelf);
         }
 
     }

@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour
     private PlayerStats m_playerStats;
     private InventoryController m_inventoryController;
     private bool m_isRolling = false;
-    private int m_direction = 1;
+    private bool m_isBlocking = false;
+    private int m_directionX = 1;
+    private int m_directionY = 1;
     private int m_currentAttack = 0;
     private float m_timeSienceAttack = 0.0f;
     private float m_delayToIdle = 0.0f;
@@ -47,19 +49,33 @@ public class PlayerController : MonoBehaviour
             if (inputX > 0)
             {
                 m_spriteRenderer.flipX = false;
-                m_direction = 1;
+                m_directionX = 1;
             }
             else if (inputX < 0)
             {
                 m_spriteRenderer.flipX = true;
-                m_direction = -1;
+                m_directionX = -1;
+            }
+
+            if (inputY > 0)
+            {
+                m_directionY = 1;
+            }
+            else if (inputY < 0)
+            {
+                m_directionY = -1;
             }
 
             //Movement
-            if (!m_isRolling)
+            if ( !m_isBlocking)
             {
                 m_rbody2D.velocity = new Vector2(inputY * m_speed, m_rbody2D.velocity.y);
                 m_rbody2D.velocity = new Vector2(inputX * m_speed, m_rbody2D.velocity.x);
+            }
+            else
+            {
+                m_rbody2D.velocity = new Vector2(0, m_rbody2D.velocity.y);
+                m_rbody2D.velocity = new Vector2(0, m_rbody2D.velocity.x);
             }
             //Hurt, momentan pt testing
             if (Input.GetKeyDown("q") && !m_isRolling)
@@ -82,20 +98,23 @@ public class PlayerController : MonoBehaviour
             }
 
             //Block
-            else if (Input.GetMouseButtonDown(1) && !m_isRolling)
+            else if (Input.GetMouseButtonDown(1) && !m_isRolling && m_playerStats.CanBlock())
             {
                 m_animator.SetTrigger("Block");
                 m_animator.SetBool("IdleBlock", true);
+                m_isBlocking = true;
             }
-            else if (Input.GetMouseButtonUp(1))
+            else if (Input.GetMouseButtonUp(1) || (m_isBlocking && !m_playerStats.CanBlock()))
+            {
                 m_animator.SetBool("IdleBlock", false);
+                m_isBlocking = false;
+            }
 
             //Roll
             else if (Input.GetKeyDown("left shift") && !m_isRolling && m_playerStats.CanUseRoll())
             {
                 m_isRolling = true;
                 m_animator.SetTrigger("Roll");
-                m_rbody2D.velocity = new Vector2(m_direction * m_rollForce, m_rbody2D.velocity.y);
             }
             //Run
             else if (Mathf.Abs(inputY) > Mathf.Epsilon || Mathf.Abs(inputX) > Mathf.Epsilon)
