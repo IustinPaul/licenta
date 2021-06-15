@@ -19,7 +19,9 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float m_critChance = 0.0f;
     [SerializeField] private float m_bleedChance = 0.0f;
     [SerializeField] private float m_thorns = 0.0f;
+    [SerializeField] private float m_speed = 4.0f;
     [SerializeField] private float m_blockStaminaCost = 40.0f;
+    [SerializeField] private float m_xpNextLevel = 10.0f;
 
     [SerializeField] private Color m_highLife;
     [SerializeField] private Color m_mediumLife;
@@ -28,14 +30,17 @@ public class PlayerStats : MonoBehaviour
     private Animator m_animator;
     private RectTransform m_lifeBar;
     private RectTransform m_staminaBar;
+    private RectTransform m_xpBar;
     private Image m_lifeBarImage;
 
     private float m_maxSizeLifeBar;
     private float m_maxSizeStaminaBar;
+    private float m_maxSizeXpBar;
     private float m_currentLife = 100.0f;
     private float m_currentStamina = 100.0f;
     private float m_armor = 1.0f;
     private float m_timeSinceDmg;
+    private float m_currentXp = 0.0f;
     private int m_level = 1;
 
     private float m_bonusLife;
@@ -60,17 +65,20 @@ public class PlayerStats : MonoBehaviour
         m_animator = GetComponent<Animator>();
         m_lifeBar = transform.GetChild(1).GetChild(0).GetChild(0) as RectTransform;
         m_staminaBar = transform.GetChild(1).GetChild(1).GetChild(0) as RectTransform;
+        m_xpBar = transform.GetChild(1).GetChild(3).GetChild(0) as RectTransform;
         m_lifeBarImage = m_lifeBar.GetComponent<Image>();
         m_maxSizeLifeBar = m_lifeBar.rect.width;
         m_maxSizeStaminaBar = m_staminaBar.rect.width;
+        m_maxSizeXpBar = m_xpBar.rect.width;
         m_timeSinceDmg = m_invulnerability;
+        UpdateXpBar();
         UpdateStatsValueText();
     }
 
     void Update()
     {
         float dt = Time.deltaTime;
-        m_timeSinceDmg += Time.deltaTime;
+        m_timeSinceDmg += dt;
 
         m_currentLife += (m_totalLife + m_bonusLife)*(m_lifeProcRegenPerSec + m_bonusLifeProcRegen) / 100.0f * dt;
         if(m_currentLife > m_totalLife + m_bonusLife)
@@ -86,6 +94,46 @@ public class PlayerStats : MonoBehaviour
 
         UpdateLifeBar();
         UpdateStaminaBar();
+    }
+    public int GetPlayerLevel()
+    {
+        return m_level;
+    }
+
+    public float GetPlayerDmg()
+    {
+        return m_attackDmg + m_bonusAttackDmg;
+    }
+
+    public float GetPlayerSpeed()
+    {
+        return m_speed + m_speed * m_bonusSpeedProc / 100.0f;
+    }
+
+    public float GetPlayerBleedDmg()
+    {
+        return m_bleedDmg + m_bonusBleedDmg;
+    }
+    public float GetPlayerBleedChance()
+    {
+        return m_bleedChance + m_bonusBleedChance;
+    }
+
+    public void ReceiveXP(float xp)
+    {
+        m_currentXp += xp;
+        if (m_currentXp >= m_xpNextLevel)
+        {
+            m_level++;
+            m_currentXp -= m_xpNextLevel;
+            m_xpNextLevel *= 2;
+            m_totalLife += 10.0f;
+            m_currentLife = m_totalLife + m_bonusLife;
+            m_totalStamina += 10.0f;
+            m_currentStamina = m_totalStamina + m_bonusStamina;
+            // stats uri bonus la anumite lvl
+        }
+        UpdateXpBar();
     }
 
     public void TakeDmg(float dmg)
@@ -327,5 +375,10 @@ public class PlayerStats : MonoBehaviour
     private void UpdateStaminaBar()
     {
         m_staminaBar.sizeDelta = new Vector2(m_maxSizeStaminaBar / (m_totalStamina + m_bonusStamina) * m_currentStamina, m_staminaBar.rect.height);
+    }
+
+    private void UpdateXpBar()
+    {
+        m_xpBar.sizeDelta = new Vector2(m_maxSizeXpBar / m_xpNextLevel * m_currentXp, m_xpBar.rect.height);
     }
 }

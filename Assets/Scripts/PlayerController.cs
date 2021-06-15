@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float m_speed = 4.0f;
     [SerializeField] private float m_rollForce = 6.0f;
 
     private Animator m_animator;
@@ -12,10 +11,10 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer m_spriteRenderer;
     private PlayerStats m_playerStats;
     private InventoryController m_inventoryController;
+    private BoxCollider2D m_lAttack;
+    private BoxCollider2D m_rAttack;
     private bool m_isRolling = false;
     private bool m_isBlocking = false;
-    private int m_directionX = 1;
-    private int m_directionY = 1;
     private int m_currentAttack = 0;
     private float m_timeSienceAttack = 0.0f;
     private float m_delayToIdle = 0.0f;
@@ -28,6 +27,8 @@ public class PlayerController : MonoBehaviour
         m_rbody2D = GetComponent<Rigidbody2D>();
         m_spriteRenderer = GetComponent<SpriteRenderer>();
         m_playerStats = GetComponent<PlayerStats>();
+        m_lAttack = transform.GetChild(2).GetChild(1).GetComponent<BoxCollider2D>();
+        m_rAttack = transform.GetChild(2).GetChild(0).GetComponent<BoxCollider2D>();
         m_inventoryController = transform.GetChild(1).GetChild(2).GetComponent<InventoryController>();
         m_inventoryController.Initialized();
     }
@@ -49,28 +50,17 @@ public class PlayerController : MonoBehaviour
             if (inputX > 0)
             {
                 m_spriteRenderer.flipX = false;
-                m_directionX = 1;
             }
             else if (inputX < 0)
             {
                 m_spriteRenderer.flipX = true;
-                m_directionX = -1;
-            }
-
-            if (inputY > 0)
-            {
-                m_directionY = 1;
-            }
-            else if (inputY < 0)
-            {
-                m_directionY = -1;
             }
 
             //Movement
             if ( !m_isBlocking)
             {
-                m_rbody2D.velocity = new Vector2(inputY * m_speed, m_rbody2D.velocity.y);
-                m_rbody2D.velocity = new Vector2(inputX * m_speed, m_rbody2D.velocity.x);
+                m_rbody2D.velocity = new Vector2(inputY * m_playerStats.GetPlayerSpeed(), m_rbody2D.velocity.y);
+                m_rbody2D.velocity = new Vector2(inputX * m_playerStats.GetPlayerSpeed(), m_rbody2D.velocity.x);
             }
             else
             {
@@ -83,7 +73,7 @@ public class PlayerController : MonoBehaviour
                 m_playerStats.TakeDmg(20);
             }
             //Attack
-            else if (Input.GetKeyDown(KeyCode.Space) && m_timeSienceAttack > 0.25f && !m_isRolling && m_playerStats.CanAttack())
+            else if (Input.GetKeyDown(KeyCode.Space) && m_timeSienceAttack > 0.5f && !m_isRolling && m_playerStats.CanAttack())
             {
                 m_currentAttack++;
 
@@ -142,17 +132,39 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Player_ResetRoll()
-    {
-        m_isRolling = false;
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Item"))
+        if (collision.CompareTag("Item") && CompareTag("Player"))
         {
             if (m_inventoryController.AddToInventory(collision.GetComponent<Item>()))
                 Destroy(collision.gameObject);
         }
     }
+
+    private void Player_ResetRoll()
+    {
+        m_isRolling = false;
+    }
+
+    public void EnableAttack()
+    {
+        if (m_spriteRenderer.flipX)
+        {
+            m_lAttack.enabled = true;
+            m_lAttack.transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            m_rAttack.enabled = true;
+            m_rAttack.transform.localScale = new Vector3(1, 1, 1);
+        }
+    }
+    public void DisableAttack()
+    {
+        m_rAttack.enabled = false;
+        m_lAttack.enabled = false;
+        m_rAttack.transform.localScale = new Vector3(0, 0, 0);
+        m_lAttack.transform.localScale = new Vector3(0, 0, 0);
+    }
+
 }
