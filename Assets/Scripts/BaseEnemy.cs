@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BaseEnemy : MonoBehaviour
 {
@@ -16,12 +17,19 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] private List<ItemsPool> m_itemTypes;
     [SerializeField] private GameObject m_droppable;
 
+    [SerializeField] private Color m_highLife = Color.green;
+    [SerializeField] private Color m_mediumLife = Color.yellow;
+    [SerializeField] private Color m_lowLife = Color.red;
+
+    private float m_maxSizeLifeBar;
     private float m_currentLife;
     private float m_bleedTimer;
     private float m_bleedDmgPerSecond;
     private PlayerStats m_playerStats;
     private Animator m_animator;
     private BoxCollider2D m_collider;
+    private RectTransform m_lifeBar;
+    private Image m_lifeBarContent;
 
     void Awake()
     {
@@ -34,6 +42,9 @@ public class BaseEnemy : MonoBehaviour
         m_currentLife = m_baseLife;
         m_bleedTimer = m_bleedDuration;
         m_animator = GetComponent<Animator>();
+        m_lifeBar = transform.GetChild(0).GetChild(0).GetChild(0) as RectTransform;
+        m_lifeBarContent = m_lifeBar.GetComponent<Image>();
+        m_maxSizeLifeBar = m_lifeBar.rect.width;
     }
 
     private void Update()
@@ -61,6 +72,7 @@ public class BaseEnemy : MonoBehaviour
     public void TakeDmg(float dmg, bool withAnimation = true)
     {
         m_currentLife -= dmg;
+        UpdateLifeBar();
         if(m_currentLife <= 0)
         {
             m_collider.enabled = false;
@@ -126,5 +138,23 @@ public class BaseEnemy : MonoBehaviour
         }
         Destroy(gameObject);
 
+    }
+    private void UpdateLifeBar()
+    {
+        m_lifeBar.sizeDelta = new Vector2(m_maxSizeLifeBar / m_baseLife * m_currentLife, m_lifeBar.rect.height);
+        if (m_maxSizeLifeBar / 2 < m_lifeBar.rect.width)
+        {
+            m_lifeBarContent.color = m_highLife;
+        }
+        else if (m_maxSizeLifeBar / 4 < m_lifeBar.rect.width)
+        {
+
+            m_lifeBarContent.color = m_mediumLife;
+        }
+        else
+        {
+
+            m_lifeBarContent.color = m_lowLife;
+        }
     }
 }

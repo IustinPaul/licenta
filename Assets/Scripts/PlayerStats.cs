@@ -132,6 +132,7 @@ public class PlayerStats : MonoBehaviour
             m_totalStamina += 10.0f;
             m_currentStamina = m_totalStamina + m_bonusStamina;
             // stats uri bonus la anumite lvl
+            UpdateStatsValueText();
         }
         UpdateXpBar();
     }
