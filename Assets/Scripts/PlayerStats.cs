@@ -105,6 +105,11 @@ public class PlayerStats : MonoBehaviour
         return m_attackDmg + m_bonusAttackDmg;
     }
 
+    public float GetPlayerCritChance()
+    {
+        return m_critChance + m_bonusCritChance;
+    }
+
     public float GetPlayerSpeed()
     {
         return m_speed + m_speed * m_bonusSpeedProc / 100.0f;
@@ -118,11 +123,15 @@ public class PlayerStats : MonoBehaviour
     {
         return m_bleedChance + m_bonusBleedChance;
     }
+    public float GetPlayerThorns()
+    {
+        return m_thorns + m_bonusThornsProc;
+    }
 
     public void ReceiveXP(float xp)
     {
         m_currentXp += xp;
-        if (m_currentXp >= m_xpNextLevel)
+        while (m_currentXp / m_xpNextLevel >= 1)
         {
             m_level++;
             m_currentXp -= m_xpNextLevel;
@@ -139,7 +148,7 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDmg(float dmg)
     {
-        if(m_timeSinceDmg > m_invulnerability)
+        if(m_timeSinceDmg > m_invulnerability && m_currentLife > 0)
         {
             if (m_animator.GetBool("IdleBlock"))
             {

@@ -9,7 +9,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] private float m_baseAttack = 5.0f;
     [SerializeField] private float m_baseXpValue = 2.0f;
     [SerializeField] private float m_dropChance = 25.0f;
-    [SerializeField] private float m_speed = 4.0f;
+    [SerializeField] private float m_speed = 0.5f;
     [SerializeField] private float m_lifePerLevel = 5.0f;
     [SerializeField] private float m_attackPerLevel = 1.0f;
     [SerializeField] private float m_bleedDuration = 5.0f;
@@ -52,7 +52,7 @@ public class BaseEnemy : MonoBehaviour
         float dt = Time.deltaTime;
         m_bleedTimer += dt;
         if (m_bleedTimer <= m_bleedDuration)
-            TakeDmg(m_bleedDmgPerSecond * dt, false);
+            TakeDmg(m_bleedDmgPerSecond * dt, 0, false);
     }
 
 
@@ -60,7 +60,7 @@ public class BaseEnemy : MonoBehaviour
     {
         if (collision.CompareTag("PlayerAttack"))
         {
-            TakeDmg(m_playerStats.GetPlayerDmg());
+            TakeDmg(m_playerStats.GetPlayerDmg(), m_playerStats.GetPlayerCritChance());
             if (m_playerStats.GetPlayerBleedChance() >= Random.Range(10,1001) / 10.0f)
             {
                 m_bleedDmgPerSecond = m_playerStats.GetPlayerBleedDmg();
@@ -69,8 +69,19 @@ public class BaseEnemy : MonoBehaviour
         }
     }
 
-    public void TakeDmg(float dmg, bool withAnimation = true)
+    public float GetEnemySpeed()
     {
+        return m_speed;
+    }
+    public float GetEnemyDmg()
+    {
+        return m_baseAttack;
+    }
+
+    public void TakeDmg(float dmg, float critChance, bool withAnimation = true)
+    {
+        if (Random.Range(10, 1001) < critChance * 10)
+            dmg *= 2;
         m_currentLife -= dmg;
         UpdateLifeBar();
         if(m_currentLife <= 0)
@@ -81,7 +92,7 @@ public class BaseEnemy : MonoBehaviour
             //disable movement
 
         }
-        else if(withAnimation)
+        else if(withAnimation && dmg > 0)
         {
             m_animator.SetTrigger("Hurt");
         }

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float m_rollForce = 6.0f;
-
     private Animator m_animator;
     private Rigidbody2D m_rbody2D;
     private SpriteRenderer m_spriteRenderer;
@@ -59,21 +57,14 @@ public class PlayerController : MonoBehaviour
             //Movement
             if ( !m_isBlocking)
             {
-                m_rbody2D.velocity = new Vector2(inputY * m_playerStats.GetPlayerSpeed(), m_rbody2D.velocity.y);
-                m_rbody2D.velocity = new Vector2(inputX * m_playerStats.GetPlayerSpeed(), m_rbody2D.velocity.x);
+                m_rbody2D.velocity = new Vector2(inputX * m_playerStats.GetPlayerSpeed(), inputY * m_playerStats.GetPlayerSpeed());
             }
             else
             {
-                m_rbody2D.velocity = new Vector2(0, m_rbody2D.velocity.y);
-                m_rbody2D.velocity = new Vector2(0, m_rbody2D.velocity.x);
-            }
-            //Hurt, momentan pt testing
-            if (Input.GetKeyDown("q") && !m_isRolling)
-            {
-                m_playerStats.TakeDmg(20);
+                m_rbody2D.velocity = Vector2.zero;
             }
             //Attack
-            else if (Input.GetKeyDown(KeyCode.Space) && m_timeSienceAttack > 0.5f && !m_isRolling && m_playerStats.CanAttack())
+            if (Input.GetKeyDown(KeyCode.Space) && m_timeSienceAttack > 0.5f && !m_isRolling && m_playerStats.CanAttack())
             {
                 m_currentAttack++;
 
@@ -127,8 +118,7 @@ public class PlayerController : MonoBehaviour
             if (m_delayToIdle < 0)
                 m_animator.SetInteger("AnimState", 0);
 
-            m_rbody2D.velocity = new Vector2(0, m_rbody2D.velocity.y);
-            m_rbody2D.velocity = new Vector2(0, m_rbody2D.velocity.x);
+            m_rbody2D.velocity = Vector2.zero;
         }
     }
 
@@ -138,6 +128,20 @@ public class PlayerController : MonoBehaviour
         {
             if (m_inventoryController.AddToInventory(collision.GetComponent<Item>()))
                 Destroy(collision.gameObject);
+        }
+        else if(collision.CompareTag("EnemyAttack") && CompareTag("Player") && !m_isRolling)
+        {
+            var v = collision.transform.parent.GetComponent<BaseEnemy>();
+            m_playerStats.TakeDmg(v.GetEnemyDmg());
+            if (m_isBlocking)
+            {
+                v.TakeDmg(v.GetEnemyDmg() * m_playerStats.GetPlayerThorns() / 100, 0);
+            }
+        }
+        else if(collision.CompareTag("EnemyProjectile") && CompareTag("Player") && !m_isRolling)
+        {
+            var v = collision.GetComponent<ProjectileController>();
+            m_playerStats.TakeDmg(v.Dmg);
         }
     }
 
@@ -151,20 +155,20 @@ public class PlayerController : MonoBehaviour
         if (m_spriteRenderer.flipX)
         {
             m_lAttack.enabled = true;
-            m_lAttack.transform.localScale = new Vector3(1, 1, 1);
+            m_lAttack.transform.localScale = Vector3.one;
         }
         else
         {
             m_rAttack.enabled = true;
-            m_rAttack.transform.localScale = new Vector3(1, 1, 1);
+            m_rAttack.transform.localScale = Vector3.one;
         }
     }
     public void DisableAttack()
     {
         m_rAttack.enabled = false;
         m_lAttack.enabled = false;
-        m_rAttack.transform.localScale = new Vector3(0, 0, 0);
-        m_lAttack.transform.localScale = new Vector3(0, 0, 0);
+        m_rAttack.transform.localScale = Vector3.zero;
+        m_lAttack.transform.localScale = Vector3.zero;
     }
 
 }
