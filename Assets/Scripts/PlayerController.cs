@@ -85,10 +85,6 @@ public class PlayerController : MonoBehaviour
                 m_animator.SetTrigger("Attack" + m_currentAttack);
                 m_timeSienceAttack = 0.0f;
             }
-            else if (Input.GetKeyDown(KeyCode.T))
-            {
-                Time.timeScale = 0;
-            }
 
             //Block
             else if (Input.GetKeyDown(KeyCode.C) && !m_isRolling && m_playerStats.CanBlock())
