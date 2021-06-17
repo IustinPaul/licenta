@@ -21,6 +21,7 @@ public class InventoryController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             m_playerController.CanMove = true;
+            Time.timeScale = 1;
             gameObject.SetActive(false);
         }
 

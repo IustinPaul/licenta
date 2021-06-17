@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private InventoryController m_inventoryController;
     private BoxCollider2D m_lAttack;
     private BoxCollider2D m_rAttack;
+    private GameObject m_menu;
     private bool m_isRolling = false;
     private bool m_isBlocking = false;
     private int m_currentAttack = 0;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
         m_rAttack = transform.GetChild(2).GetChild(0).GetComponent<BoxCollider2D>();
         m_inventoryController = transform.GetChild(1).GetChild(2).GetComponent<InventoryController>();
         m_inventoryController.Initialized();
+        m_menu = transform.GetChild(1).GetChild(4).gameObject;
     }
 
     void Update()
@@ -37,10 +39,16 @@ public class PlayerController : MonoBehaviour
 
         if (CanMove)
         {
-            if (Input.GetKeyDown(KeyCode.Tab) && !m_isRolling)
+            if (Input.GetKeyDown(KeyCode.Tab) && !m_isRolling && Time.timeScale != 0)
             {
                 m_inventoryController.gameObject.SetActive(true);
                 CanMove = false;
+                Time.timeScale = 0;
+            }
+            else if(Input.GetKeyDown(KeyCode.Escape) && Time.timeScale != 0)
+            {
+                Time.timeScale = 0;
+                m_menu.SetActive(true);
             }
             float inputX = Input.GetAxis("Horizontal");
             float inputY = Input.GetAxis("Vertical");
@@ -76,6 +84,10 @@ public class PlayerController : MonoBehaviour
 
                 m_animator.SetTrigger("Attack" + m_currentAttack);
                 m_timeSienceAttack = 0.0f;
+            }
+            else if (Input.GetKeyDown(KeyCode.T))
+            {
+                Time.timeScale = 0;
             }
 
             //Block
