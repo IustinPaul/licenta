@@ -43,7 +43,6 @@ public class PlayerController : MonoBehaviour
             {
                 m_inventoryController.gameObject.SetActive(true);
                 CanMove = false;
-                Time.timeScale = 0;
             }
             else if(Input.GetKeyDown(KeyCode.Escape) && Time.timeScale != 0)
             {

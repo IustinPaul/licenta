@@ -96,7 +96,7 @@ public class FlyingEyeController : MonoBehaviour
             var v = Instantiate(m_projectile, m_attackColl.transform.position, transform.rotation).GetComponent<ProjectileController>();
             v.Dmg = m_baseEnemy.GetEnemyDmg();
             v.Speed = m_baseEnemy.GetEnemySpeed() * 2;
-            v.LifeSpan = 5;
+            v.LifeSpan = 3;
             switch (i)
             {
                 case 0:

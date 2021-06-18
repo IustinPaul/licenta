@@ -45,6 +45,7 @@ public class BaseEnemy : MonoBehaviour
         m_lifeBar = transform.GetChild(0).GetChild(0).GetChild(0) as RectTransform;
         m_lifeBarContent = m_lifeBar.GetComponent<Image>();
         m_maxSizeLifeBar = m_lifeBar.rect.width;
+        m_speed = Random.Range(1.0f, m_speed);
     }
 
     private void Update()

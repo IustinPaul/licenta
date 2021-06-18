@@ -128,6 +128,12 @@ public class PlayerStats : MonoBehaviour
         return m_thorns + m_bonusThornsProc;
     }
 
+    public void Restore()
+    {
+        m_currentLife = m_totalLife + m_bonusLife;
+        m_currentStamina = m_totalStamina + m_bonusStamina;
+    }
+
     public void ReceiveXP(float xp)
     {
         m_currentXp += xp;
