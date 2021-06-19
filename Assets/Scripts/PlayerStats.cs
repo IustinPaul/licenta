@@ -6,26 +6,28 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour
 {
     [SerializeField] private Text m_statsValueTxt;
-
-    [SerializeField] private float m_totalLife = 100.0f;
-    [SerializeField] private float m_attackDmg = 10.0f;
-    [SerializeField] private float m_totalStamina = 100.0f;
-    [SerializeField] private float m_invulnerability = 1.0f;
-    [SerializeField] private float m_lifeProcRegenPerSec = 0.0f;
-    [SerializeField] private float m_staminaProcRegenPerSec = 5.0f;
-    [SerializeField] private float m_rollStaminaCost = 20.0f;
-    [SerializeField] private float m_attackStaminaCost = 10.0f;
-    [SerializeField] private float m_bleedDmg = 0.0f;
-    [SerializeField] private float m_critChance = 0.0f;
-    [SerializeField] private float m_bleedChance = 0.0f;
-    [SerializeField] private float m_thorns = 0.0f;
-    [SerializeField] private float m_speed = 4.0f;
-    [SerializeField] private float m_blockStaminaCost = 40.0f;
-    [SerializeField] private float m_xpNextLevel = 10.0f;
-
     [SerializeField] private Color m_highLife;
     [SerializeField] private Color m_mediumLife;
     [SerializeField] private Color m_lowLife;
+
+    public float TotalLife = 100.0f;
+    public float AttackDmg = 10.0f;
+    public float TotalStamina = 100.0f;
+    public float Invulnerability = 1.0f;
+    public float LifeProcRegenPerSec = 0.0f;
+    public float StaminaProcRegenPerSec = 5.0f;
+    public float RollStaminaCost = 20.0f;
+    public float AttackStaminaCost = 10.0f;
+    public float BleedDmg = 0.0f;
+    public float CritChance = 0.0f;
+    public float BleedChance = 0.0f;
+    public float Thorns = 0.0f;
+    public float Speed = 4.0f;
+    public float BlockStaminaCost = 40.0f;
+    public float XpNextLevel = 10.0f;
+    public float Armor = 1.0f;
+    public float CurrentXp = 0.0f;
+    public int Level = 1;
 
     private Animator m_animator;
     private RectTransform m_lifeBar;
@@ -38,10 +40,7 @@ public class PlayerStats : MonoBehaviour
     private float m_maxSizeXpBar;
     private float m_currentLife = 100.0f;
     private float m_currentStamina = 100.0f;
-    private float m_armor = 1.0f;
     private float m_timeSinceDmg;
-    private float m_currentXp = 0.0f;
-    private int m_level = 1;
 
     private float m_bonusLife;
     private float m_bonusStamina;
@@ -70,7 +69,7 @@ public class PlayerStats : MonoBehaviour
         m_maxSizeLifeBar = m_lifeBar.rect.width;
         m_maxSizeStaminaBar = m_staminaBar.rect.width;
         m_maxSizeXpBar = m_xpBar.rect.width;
-        m_timeSinceDmg = m_invulnerability;
+        m_timeSinceDmg = Invulnerability;
         UpdateXpBar();
         UpdateStatsValueText();
     }
@@ -80,16 +79,16 @@ public class PlayerStats : MonoBehaviour
         float dt = Time.deltaTime;
         m_timeSinceDmg += dt;
 
-        m_currentLife += (m_totalLife + m_bonusLife)*(m_lifeProcRegenPerSec + m_bonusLifeProcRegen) / 100.0f * dt;
-        if(m_currentLife > m_totalLife + m_bonusLife)
+        m_currentLife += (TotalLife + m_bonusLife)*(LifeProcRegenPerSec + m_bonusLifeProcRegen) / 100.0f * dt;
+        if(m_currentLife > TotalLife + m_bonusLife)
         {
-            m_currentLife = m_totalLife + m_bonusLife;
+            m_currentLife = TotalLife + m_bonusLife;
         }
 
-        m_currentStamina += (m_totalStamina + m_bonusStamina) * (m_staminaProcRegenPerSec + m_bonusStaminaProcRegen) /100.0f * dt;
-        if(m_currentStamina > m_totalStamina + m_bonusStamina)
+        m_currentStamina += (TotalStamina + m_bonusStamina) * (StaminaProcRegenPerSec + m_bonusStaminaProcRegen) /100.0f * dt;
+        if(m_currentStamina > TotalStamina + m_bonusStamina)
         {
-            m_currentStamina = m_totalStamina + m_bonusStamina;
+            m_currentStamina = TotalStamina + m_bonusStamina;
         }
 
         UpdateLifeBar();
@@ -97,55 +96,55 @@ public class PlayerStats : MonoBehaviour
     }
     public int GetPlayerLevel()
     {
-        return m_level;
+        return Level;
     }
 
     public float GetPlayerDmg()
     {
-        return m_attackDmg + m_bonusAttackDmg;
+        return AttackDmg + m_bonusAttackDmg;
     }
 
     public float GetPlayerCritChance()
     {
-        return m_critChance + m_bonusCritChance;
+        return CritChance + m_bonusCritChance;
     }
 
     public float GetPlayerSpeed()
     {
-        return m_speed + m_speed * m_bonusSpeedProc / 100.0f;
+        return Speed + Speed * m_bonusSpeedProc / 100.0f;
     }
 
     public float GetPlayerBleedDmg()
     {
-        return m_bleedDmg + m_bonusBleedDmg;
+        return BleedDmg + m_bonusBleedDmg;
     }
     public float GetPlayerBleedChance()
     {
-        return m_bleedChance + m_bonusBleedChance;
+        return BleedChance + m_bonusBleedChance;
     }
     public float GetPlayerThorns()
     {
-        return m_thorns + m_bonusThornsProc;
+        return Thorns + m_bonusThornsProc;
     }
 
     public void Restore()
     {
-        m_currentLife = m_totalLife + m_bonusLife;
-        m_currentStamina = m_totalStamina + m_bonusStamina;
+        m_currentLife = TotalLife + m_bonusLife;
+        m_currentStamina = TotalStamina + m_bonusStamina;
     }
 
     public void ReceiveXP(float xp)
     {
-        m_currentXp += xp;
-        while (m_currentXp / m_xpNextLevel >= 1)
+        CurrentXp += xp;
+        while (CurrentXp / XpNextLevel >= 1)
         {
-            m_level++;
-            m_currentXp -= m_xpNextLevel;
-            m_xpNextLevel *= 2;
-            m_totalLife += 10.0f;
-            m_currentLife = m_totalLife + m_bonusLife;
-            m_totalStamina += 10.0f;
-            m_currentStamina = m_totalStamina + m_bonusStamina;
+            Level++;
+            CurrentXp -= XpNextLevel;
+            XpNextLevel *= 2;
+            TotalLife += 10.0f;
+            m_currentLife = TotalLife + m_bonusLife;
+            TotalStamina += 10.0f;
+            m_currentStamina = TotalStamina + m_bonusStamina;
             // stats uri bonus la anumite lvl
             UpdateStatsValueText();
         }
@@ -154,17 +153,17 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDmg(float dmg)
     {
-        if(m_timeSinceDmg > m_invulnerability && m_currentLife > 0)
+        if(m_timeSinceDmg > Invulnerability && m_currentLife > 0)
         {
             if (m_animator.GetBool("IdleBlock"))
             {
                 m_animator.SetTrigger("AttackBlocked");
-                m_currentStamina -= m_blockStaminaCost - m_blockStaminaCost * m_bonusBlockCostProc / 100.0f;
+                m_currentStamina -= BlockStaminaCost - BlockStaminaCost * m_bonusBlockCostProc / 100.0f;
                 UpdateStaminaBar();
             }
             else
             {
-                m_currentLife -= dmg / (m_armor + m_bonusArmor);
+                m_currentLife -= dmg / (Armor + m_bonusArmor);
                 UpdateLifeBar();
                 m_timeSinceDmg = 0;
                 if (m_currentLife <= 0)
@@ -182,7 +181,7 @@ public class PlayerStats : MonoBehaviour
     }
     public bool CanUseRoll()
     {
-        float cost = m_rollStaminaCost - m_rollStaminaCost * m_bonusRollCostProc / 100.0f;
+        float cost = RollStaminaCost - RollStaminaCost * m_bonusRollCostProc / 100.0f;
         if (m_currentStamina >= cost)
         {
             m_currentStamina -= cost;
@@ -194,7 +193,7 @@ public class PlayerStats : MonoBehaviour
     }
     public bool CanAttack()
     {
-        float cost = m_attackStaminaCost - m_attackStaminaCost * m_bonusAttackCostProc / 100.0f;
+        float cost = AttackStaminaCost - AttackStaminaCost * m_bonusAttackCostProc / 100.0f;
         if (m_currentStamina >= cost)
         {
             m_currentStamina -= cost;
@@ -207,7 +206,7 @@ public class PlayerStats : MonoBehaviour
 
     public bool CanBlock()
     {
-        float cost = m_blockStaminaCost - m_blockStaminaCost * m_bonusBlockCostProc / 100.0f;
+        float cost = BlockStaminaCost - BlockStaminaCost * m_bonusBlockCostProc / 100.0f;
         if (m_currentStamina >= cost)
         {
             return true;
@@ -251,11 +250,11 @@ public class PlayerStats : MonoBehaviour
             }
         }
 
-        m_bonusLife += (m_totalLife + m_bonusLife) * lifeProcent / 100.0f;
-        m_bonusStamina += (m_totalStamina + m_bonusStamina) * staminaProcent / 100.0f;
-        m_bonusArmor += (m_bonusArmor + m_armor) * armorProcent / 100.0f;
-        m_bonusBleedDmg += (m_bonusBleedDmg + m_bleedDmg) * bleedDmgProcent / 100.0f;
-        m_bonusAttackDmg += (m_bonusAttackDmg + m_attackDmg) * attackDmgProcent / 100.0f;
+        m_bonusLife += (TotalLife + m_bonusLife) * lifeProcent / 100.0f;
+        m_bonusStamina += (TotalStamina + m_bonusStamina) * staminaProcent / 100.0f;
+        m_bonusArmor += (m_bonusArmor + Armor) * armorProcent / 100.0f;
+        m_bonusBleedDmg += (m_bonusBleedDmg + BleedDmg) * bleedDmgProcent / 100.0f;
+        m_bonusAttackDmg += (m_bonusAttackDmg + AttackDmg) * attackDmgProcent / 100.0f;
         UpdateStatsValueText();
 
         void AddToStats(Effect effect)
@@ -348,30 +347,35 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    private void UpdateStatsValueText()
+    public void UpdateStatsValueText()
     {
-        string level = m_level.ToString()+"\n";
-        string life = (m_totalLife + m_bonusLife).ToString("0") + "\n";
-        string lifeRegen = (m_lifeProcRegenPerSec + m_bonusLifeProcRegen).ToString("0.0") + " hp/s\n";
-        string stamina = (m_totalStamina + m_bonusStamina).ToString("0") + "\n";
-        string staminaRegen = (m_staminaProcRegenPerSec + m_bonusStaminaProcRegen).ToString("0.0") + " sp/s\n";
-        string armor = (m_armor + m_bonusArmor).ToString("0") + "\n";
-        string attackDmg = (m_attackDmg + m_bonusAttackDmg).ToString("0.0") + "\n";
-        string critChance = (m_critChance + m_bonusCritChance).ToString("0.0") + "%\n";
-        string bleedDmg = (m_bleedDmg + m_bonusBleedDmg).ToString("0.0") + "\n";
-        string bleedChance = (m_bleedChance + m_bonusBleedChance).ToString("0.0") + "%\n";
+        string level = Level.ToString()+"\n";
+        string life = (TotalLife + m_bonusLife).ToString("0") + "\n";
+        string lifeRegen = (LifeProcRegenPerSec + m_bonusLifeProcRegen).ToString("0.0") + " hp/s\n";
+        string stamina = (TotalStamina + m_bonusStamina).ToString("0") + "\n";
+        string staminaRegen = (StaminaProcRegenPerSec + m_bonusStaminaProcRegen).ToString("0.0") + " sp/s\n";
+        string armor = (Armor + m_bonusArmor).ToString("0") + "\n";
+        string attackDmg = (AttackDmg + m_bonusAttackDmg).ToString("0.0") + "\n";
+        string critChance = (CritChance + m_bonusCritChance).ToString("0.0") + "%\n";
+        string bleedDmg = (BleedDmg + m_bonusBleedDmg).ToString("0.0") + "\n";
+        string bleedChance = (BleedChance + m_bonusBleedChance).ToString("0.0") + "%\n";
         string attackCost = m_bonusAttackCostProc.ToString("0.0") + "%\n";
         string rollCost = m_bonusRollCostProc.ToString("0.0") + "%\n";
         string blockCost = m_bonusBlockCostProc.ToString("0.0") + "%\n";
         string invulnerability = m_bonusInvulnerabilityProc.ToString("0.0") + "%\n";
-        string thornsDmg = (m_thorns + m_bonusThornsProc).ToString("0.0") + "%";
+        string thornsDmg = (Thorns + m_bonusThornsProc).ToString("0.0") + "%";
 
         m_statsValueTxt.text = level + life + lifeRegen + stamina + staminaRegen + armor + attackDmg + critChance + bleedDmg + bleedChance + attackCost + rollCost + blockCost + invulnerability + thornsDmg;
     }
 
+    public void UpdateXpBar()
+    {
+        m_xpBar.sizeDelta = new Vector2(m_maxSizeXpBar / XpNextLevel * CurrentXp, m_xpBar.rect.height);
+    }
+
     private void UpdateLifeBar()
     {
-        m_lifeBar.sizeDelta= new Vector2(m_maxSizeLifeBar / (m_totalLife + m_bonusLife) * m_currentLife, m_lifeBar.rect.height);
+        m_lifeBar.sizeDelta= new Vector2(m_maxSizeLifeBar / (TotalLife + m_bonusLife) * m_currentLife, m_lifeBar.rect.height);
         if(m_maxSizeLifeBar/2 < m_lifeBar.rect.width)
         {
             m_lifeBarImage.color = m_highLife;
@@ -390,11 +394,6 @@ public class PlayerStats : MonoBehaviour
 
     private void UpdateStaminaBar()
     {
-        m_staminaBar.sizeDelta = new Vector2(m_maxSizeStaminaBar / (m_totalStamina + m_bonusStamina) * m_currentStamina, m_staminaBar.rect.height);
-    }
-
-    private void UpdateXpBar()
-    {
-        m_xpBar.sizeDelta = new Vector2(m_maxSizeXpBar / m_xpNextLevel * m_currentXp, m_xpBar.rect.height);
+        m_staminaBar.sizeDelta = new Vector2(m_maxSizeStaminaBar / (TotalStamina + m_bonusStamina) * m_currentStamina, m_staminaBar.rect.height);
     }
 }

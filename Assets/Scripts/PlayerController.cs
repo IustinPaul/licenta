@@ -133,7 +133,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.CompareTag("Item") && CompareTag("Player"))
         {
-            if (m_inventoryController.AddToInventory(collision.GetComponent<Item>()))
+            if (m_inventoryController.AddToInventory(collision.GetComponent<Item>())!=null)
                 Destroy(collision.gameObject);
         }
         else if(collision.CompareTag("EnemyAttack") && CompareTag("Player") && !m_isRolling)

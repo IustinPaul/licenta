@@ -209,21 +209,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_statsValueTxt: {fileID: 6421941727966181542}
-  m_totalLife: 100
-  m_attackDmg: 10
-  m_totalStamina: 100
-  m_invulnerability: 0.5
-  m_lifeProcRegenPerSec: 0
-  m_staminaProcRegenPerSec: 5
-  m_rollStaminaCost: 20
-  m_attackStaminaCost: 10
-  m_bleedDmg: 0
-  m_critChance: 0
-  m_bleedChance: 0
-  m_thorns: 0
-  m_speed: 4
-  m_blockStaminaCost: 40
-  m_xpNextLevel: 10
+  TotalLife: 100
+  AttackDmg: 10
+  TotalStamina: 100
+  Invulnerability: 0.5
+  LifeProcRegenPerSec: 0
+  StaminaProcRegenPerSec: 5
+  RollStaminaCost: 20
+  AttackStaminaCost: 10
+  BleedDmg: 0
+  CritChance: 0
+  BleedChance: 0
+  Thorns: 0
+  Speed: 4
+  BlockStaminaCost: 40
+  XpNextLevel: 10
   m_highLife: {r: 0, g: 1, b: 0.09019608, a: 1}
   m_mediumLife: {r: 1, g: 1, b: 0, a: 1}
   m_lowLife: {r: 1, g: 0, b: 0, a: 1}

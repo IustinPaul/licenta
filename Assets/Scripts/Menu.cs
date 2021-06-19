@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
@@ -41,15 +42,18 @@ public class Menu : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Return))
         {
+            Time.timeScale = 1;
             switch (m_selectedIndex)
             {
                 case 0:
-                    Time.timeScale = 1;
                     gameObject.SetActive(false);
                     break;
                 case 1:
+                    PlayerPrefs.SetInt("IsLoaded", 1);
+                    SceneManager.LoadScene(1);
                     break;
                 case 2:
+                    SceneManager.LoadScene(0);
                     break;
                 default:
                     break;

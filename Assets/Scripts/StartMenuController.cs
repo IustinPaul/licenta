@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class StartMenuController : MonoBehaviour
@@ -40,12 +41,16 @@ public class StartMenuController : MonoBehaviour
             switch (m_selectedIndex)
             {
                 case 0:
+                    PlayerPrefs.SetInt("IsLoaded", 0);
                     nextScreen.SetActive(true);
                     gameObject.SetActive(false);
                     break;
                 case 1:
+                    PlayerPrefs.SetInt("IsLoaded", 1);
+                    SceneManager.LoadScene(1);
                     break;
                 case 2:
+                    Application.Quit();
                     break;
                 default:
                     break;

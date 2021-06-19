@@ -13,8 +13,8 @@ public class InventoryController : MonoBehaviour
     private int m_selectorX = 0;
     private int m_selectorY = 0;
     private float m_toDestroy = 0;
-    private Item[,] m_inventory;
-    private Item[] m_equiped;
+    public Item[,] Inventory;
+    public Item[] Equiped;
 
     void Update()
     {
@@ -25,13 +25,13 @@ public class InventoryController : MonoBehaviour
             gameObject.SetActive(false);
         }
 
-        if (Input.GetKey(KeyCode.W) && m_inventory[m_selectorY, m_selectorX].Name != "" && 
-            !m_inventory[m_selectorY, m_selectorX].transform.GetChild(1).gameObject.activeSelf)
+        if (Input.GetKey(KeyCode.W) && Inventory[m_selectorY, m_selectorX].Name != "" && 
+            !Inventory[m_selectorY, m_selectorX].transform.GetChild(1).gameObject.activeSelf)
         {
             m_toDestroy += Time.deltaTime;
             if (m_toDestroy > 1)
             {
-                Item item = m_inventory[m_selectorY, m_selectorX];
+                Item item = Inventory[m_selectorY, m_selectorX];
                 Image img = item.transform.GetChild(0).GetComponent<Image>();
                 img.sprite = null;
                 img.gameObject.SetActive(false);
@@ -56,8 +56,8 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorX = 0;
             }
-            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
-            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
+            m_selector.transform.position = Inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(Inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -67,8 +67,8 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorX = m_inventoryWidth - 1;
             }
-            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
-            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
+            m_selector.transform.position = Inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(Inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -77,8 +77,8 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorY = 0;
             }
-            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
-            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
+            m_selector.transform.position = Inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(Inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -87,15 +87,15 @@ public class InventoryController : MonoBehaviour
             {
                 m_selectorY = m_inventoryHeigth - 1;
             }
-            m_selector.transform.position = m_inventory[m_selectorY, m_selectorX].transform.position;
-            SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
+            m_selector.transform.position = Inventory[m_selectorY, m_selectorX].transform.position;
+            SetItemInfo(Inventory[m_selectorY, m_selectorX]);
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
-            if(m_inventory[m_selectorY,m_selectorX].Name != "")
+            if(Inventory[m_selectorY,m_selectorX].Name != "")
             {
-                EquipItem(m_inventory[m_selectorY, m_selectorX]);
-                m_playerStats.UpdateBonusStats(m_equiped);
+                EquipItem(Inventory[m_selectorY, m_selectorX]);
+                m_playerStats.UpdateBonusStats(Equiped);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Q))
@@ -108,27 +108,27 @@ public class InventoryController : MonoBehaviour
 
     private void OnEnable()
     {
-        SetItemInfo(m_inventory[m_selectorY, m_selectorX]);
+        SetItemInfo(Inventory[m_selectorY, m_selectorX]);
     }
 
     public void Initialized()
     {
-        m_inventory = new Item[m_inventoryHeigth, m_inventoryWidth];
-        m_equiped = new Item[10];
+        Inventory = new Item[m_inventoryHeigth, m_inventoryWidth];
+        Equiped = new Item[10];
         for (int i = 0; i < m_inventoryHeigth; i++)
         {
             for (int j = 0; j < m_inventoryWidth; j++)
             {
-                m_inventory[i, j] = transform.GetChild(0).GetChild(i * m_inventoryWidth + j).GetComponent<Item>();
+                Inventory[i, j] = transform.GetChild(0).GetChild(i * m_inventoryWidth + j).GetComponent<Item>();
             }
         }
         for (int i = 0; i < 10; i++)
         {
-            m_equiped[i] = transform.GetChild(1).GetChild(1 + i).GetComponent<Item>();
+            Equiped[i] = transform.GetChild(1).GetChild(1 + i).GetComponent<Item>();
         }
     }
 
-    private void EquipItem(Item item)
+    public void EquipItem(Item item)
     {
         int slot = 0;
 
@@ -169,7 +169,7 @@ public class InventoryController : MonoBehaviour
 
         }
 
-        Item itemSlot = m_equiped[slot];
+        Item itemSlot = Equiped[slot];
         Image img = itemSlot.transform.GetChild(0).GetComponent<Image>();
         if (itemSlot.PosInInv == item)
         {
@@ -232,32 +232,41 @@ public class InventoryController : MonoBehaviour
         m_selector.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = txt2;
     }
 
-    public bool AddToInventory(Item item)
+    public Item AddToInventory(Item item)
     {
         for(int i = 0; i < m_inventoryHeigth; i++)
         {
             for(int  j = 0; j < m_inventoryWidth; j++)
             {
-                if (m_inventory[i, j].Name.Equals(""))
+                if (Inventory[i, j].Name.Equals(""))
                 {
-                    m_inventory[i, j].Name = item.Name;
-                    m_inventory[i, j].Level = item.Level;
-                    m_inventory[i, j].Sprite = item.Sprite;
+                    Inventory[i, j].Name = item.Name;
+                    Inventory[i, j].Level = item.Level;
+                    Inventory[i, j].Sprite = item.Sprite;
                     foreach(var v in item.BaseStats)
                     {
-                        m_inventory[i, j].BaseStats.Add(new Effect(v.ApplyTo, v.Amount));
+                        Inventory[i, j].BaseStats.Add(new Effect(v.ApplyTo, v.Amount));
                     }
                     foreach(var v in item.Effects)
                     {
-                        m_inventory[i, j].Effects.Add(new Effect(v.ApplyTo, v.Amount));
+                        Inventory[i, j].Effects.Add(new Effect(v.ApplyTo, v.Amount));
                     }
-                    Image img = m_inventory[i, j].transform.GetChild(0).GetComponent<Image>();
+                    Image img = Inventory[i, j].transform.GetChild(0).GetComponent<Image>();
                     img.sprite = item.Sprite;
                     img.gameObject.SetActive(true);
-                    return true;
+                    return Inventory[i,j];
                 }
             }
         }
-        return false;
+        return null;
+    }
+
+    public int GetHeigth()
+    {
+        return m_inventoryHeigth;
+    }
+    public int GetWidth()
+    {
+        return m_inventoryWidth;
     }
 }
