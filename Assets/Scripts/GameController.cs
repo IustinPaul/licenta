@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if(m_enemiesOnMap.childCount == 0 && GameStage < 8)
+        if(m_enemiesOnMap.childCount == 0 && GameStage < 5)
         {
             EnemyMapExitColl.SetActive(true);
         }
@@ -64,6 +64,7 @@ public class GameController : MonoBehaviour
         save.CurrentXp = Player.CurrentXp;
         save.Armor = Player.Armor;
         save.Level = Player.Level;
+        save.Score = Player.Score;
 
         InventoryController ic = Player.transform.GetChild(1).GetChild(2).GetComponent<InventoryController>();
         for(int i =0; i< ic.GetHeigth(); i++)
@@ -105,6 +106,7 @@ public class GameController : MonoBehaviour
     public void SaveGame()
     {
         Save save = CreateSaveGameObject();
+        Debug.Log(Application.persistentDataPath + "/gamesave.save");
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
@@ -143,6 +145,7 @@ public class GameController : MonoBehaviour
             Player.CurrentXp = save.CurrentXp;
             Player.Armor = save.Armor;
             Player.Level = save.Level;
+            Player.Score = save.Score;
 
             InventoryController ic = Player.transform.GetChild(1).GetChild(2).GetComponent<InventoryController>();
             foreach(var v in save.Items)
@@ -166,8 +169,9 @@ public class GameController : MonoBehaviour
                 }
                 Destroy(item);
             }
-
+            Player.UpdateBonusStats(ic.Equiped);
             Player.UpdateStatsValueText();
+            Player.Restore();
             Player.UpdateXpBar();
 
             Debug.Log("Game Loaded");
@@ -178,123 +182,117 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void SaveCurrentScore(string name, int score)
+    {
+        SavedScores savedScores;
+        BinaryFormatter bf = new BinaryFormatter(); 
+        FileStream file;
+
+        if (File.Exists(Application.persistentDataPath + "/scores.save"))
+        {
+            file = File.Open(Application.persistentDataPath + "/scores.save", FileMode.Open);
+            savedScores = (SavedScores)bf.Deserialize(file);
+            file.Close();
+        }
+        else
+        {
+            savedScores = new SavedScores();
+        }
+        for (int i = 0; i < 10; i++)
+        {
+            if (i == savedScores.Names.Count || savedScores.Scores[i] < score)
+            {
+                savedScores.Names.Insert(i, name);
+                savedScores.Scores.Insert(i, score);
+                break;
+            }
+        }
+        if (savedScores.Names.Count > 10)
+        {
+            savedScores.Names.RemoveAt(10);
+            savedScores.Scores.RemoveAt(10);
+        }
+        file = File.Create(Application.persistentDataPath + "/scores.save");
+        bf.Serialize(file, savedScores);
+        file.Close();
+
+        Debug.Log("Scores saved");
+    }
+
     public void SpawnEnemies()
     {
         switch (GameStage)
         {
             case 0:
-                for (int i = 0; i < 3 + Player.GetPlayerLevel(); i++)
-                {
-                    int pos = Random.Range(0, m_spawnLocations.Count);
-                    if (pos % 2 == 0)
-                    {
-                        Instantiate(m_enemiesTypes[0], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
-                    }
-                    else
-                    {
-                        Instantiate(m_enemiesTypes[0], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
-                    }
-                }
-                break;
-            case 1:
-                for (int i = 0; i < 5 + Player.GetPlayerLevel(); i++)
+                for (int i = 0; i < 5 + Player.GetPlayerLevel()/10; i++)
                 {
                     int enemy = Random.Range(0, 2);
                     int pos = Random.Range(0, m_spawnLocations.Count);
                     if (pos % 2 == 0)
                     {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[enemy], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 15), 0), transform.rotation, m_enemiesOnMap);
                     }
                     else
                     {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[enemy], new Vector3(Random.Range(-14, 20), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
                     }
                 }
                 break;
-            case 2:
-                for (int i = 0; i < 3 + Player.GetPlayerLevel(); i++)
+            case 1:
+                for (int i = 0; i < 3 + Player.GetPlayerLevel()/10; i++)
                 {
                     int pos = Random.Range(0, m_spawnLocations.Count);
                     if (pos % 2 == 0)
                     {
-                        Instantiate(m_enemiesTypes[2], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[2], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 15), 0), transform.rotation, m_enemiesOnMap);
                     }
                     else
                     {
-                        Instantiate(m_enemiesTypes[2], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[2], new Vector3(Random.Range(-14, 20), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
                     }
                 }
                 break;
-            case 3:
-                for (int i = 0; i < 5 + Player.GetPlayerLevel(); i++)
+            case 2:
+                for (int i = 0; i < 5 + Player.GetPlayerLevel()/10; i++)
                 {
                     int enemy = Random.Range(3, 5);
                     int pos = Random.Range(0, m_spawnLocations.Count);
                     if (pos % 2 == 0)
                     {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[enemy], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 15), 0), transform.rotation, m_enemiesOnMap);
                     }
                     else
                     {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[enemy], new Vector3(Random.Range(-14, 20), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
                     }
                 }
                 break;
-            case 4:
-                for (int i = 0; i < 7 + Player.GetPlayerLevel(); i++)
+            case 3:
+                for (int i = 0; i < 6 + Player.GetPlayerLevel()/10; i++)
                 {
                     int enemy = Random.Range(4,6);
                     int pos = Random.Range(0, m_spawnLocations.Count);
                     if (pos % 2 == 0)
                     {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[enemy], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 15), 0), transform.rotation, m_enemiesOnMap);
                     }
                     else
                     {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[enemy], new Vector3(Random.Range(-14, 20), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
                     }
                 }
                 break;
-            case 5:
-                for (int i = 0; i < 1 + Player.GetPlayerLevel()/5; i++)
+            case 4:
+                for (int i = 0; i < 1 + Player.GetPlayerLevel() / 20; i++)
                 {
                     int pos = Random.Range(0, m_spawnLocations.Count);
                     if (pos % 2 == 0)
                     {
-                        Instantiate(m_enemiesTypes[6], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[7], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 15), 0), transform.rotation, m_enemiesOnMap);
                     }
                     else
                     {
-                        Instantiate(m_enemiesTypes[6], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
-                    }
-                }
-                break;
-            case 6:
-                for (int i = 0; i < 7 + Player.GetPlayerLevel(); i++)
-                {
-                    int enemy = Random.Range(0,5);
-                    int pos = Random.Range(0, m_spawnLocations.Count);
-                    if (pos % 2 == 0)
-                    {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
-                    }
-                    else
-                    {
-                        Instantiate(m_enemiesTypes[enemy], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
-                    }
-                }
-                break;
-            case 7:
-                for (int i = 0; i < 1 + Player.GetPlayerLevel() / 10; i++)
-                {
-                    int pos = Random.Range(0, m_spawnLocations.Count);
-                    if (pos % 2 == 0)
-                    {
-                        Instantiate(m_enemiesTypes[7], new Vector3(m_spawnLocations[pos].position.x, Random.Range(-20, 17), 0), transform.rotation, m_enemiesOnMap);
-                    }
-                    else
-                    {
-                        Instantiate(m_enemiesTypes[7], new Vector3(Random.Range(-16, 21), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
+                        Instantiate(m_enemiesTypes[7], new Vector3(Random.Range(-14, 20), m_spawnLocations[pos].position.y, 0), transform.rotation, m_enemiesOnMap);
                     }
                 }
                 break;

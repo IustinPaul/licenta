@@ -14,6 +14,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] private float m_attackPerLevel = 1.0f;
     [SerializeField] private float m_bleedDuration = 5.0f;
     [SerializeField] private int m_level = 1;
+    [SerializeField] private int m_score = 10;
     [SerializeField] private List<ItemsPool> m_itemTypes;
     [SerializeField] private GameObject m_droppable;
 
@@ -45,7 +46,7 @@ public class BaseEnemy : MonoBehaviour
         m_lifeBar = transform.GetChild(0).GetChild(0).GetChild(0) as RectTransform;
         m_lifeBarContent = m_lifeBar.GetComponent<Image>();
         m_maxSizeLifeBar = m_lifeBar.rect.width;
-        m_speed = Random.Range(1.0f, m_speed);
+        m_speed = Random.Range(0.9f, m_speed);
     }
 
     private void Update()
@@ -88,10 +89,10 @@ public class BaseEnemy : MonoBehaviour
         if(m_currentLife <= 0)
         {
             m_collider.enabled = false;
+            m_animator.SetBool("IsDead", true);
             m_animator.SetTrigger("Death");
             m_playerStats.ReceiveXP(m_baseXpValue);
-            //disable movement
-
+            m_playerStats.Score += m_score;
         }
         else if(withAnimation && dmg > 0)
         {

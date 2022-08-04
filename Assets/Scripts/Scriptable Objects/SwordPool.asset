@@ -15,7 +15,7 @@ MonoBehaviour:
   ItemType: Sword
   BaseStats:
   - ApplyTo: Attack Dmg.
-    Amount: 5
+    Amount: 1
   - ApplyTo: Bleed Chance
     Amount: 0.1%
   - ApplyTo: Bleed Dmg.

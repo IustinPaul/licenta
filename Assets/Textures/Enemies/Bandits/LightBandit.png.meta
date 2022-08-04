@@ -132,6 +132,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -964,6 +965,43 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      LightBandit_3: 5762447904151190788
+      LightBandit_2: -3793065437365655120
+      LightBandit_16: -432466364012126320
+      LightBandit_17: -6547748350301717452
+      LightBandit_1: 199220036092633495
+      LightBandit_5: -7734575796892476207
+      LightBandit_32: 281259605958427469
+      LightBandit_19: 6389746812270015105
+      LightBandit_35: 3730428872026013724
+      LightBandit_20: 6046700340489993513
+      LightBandit_6: 5420599328299512162
+      LightBandit_29: 787442259200014970
+      LightBandit_34: -6276740940018014436
+      LightBandit_31: 4354214996985446698
+      LightBandit_12: -5291732744143370936
+      LightBandit_22: -4059423082674559007
+      LightBandit_27: 6793143449532246489
+      LightBandit_15: -2275518834047429075
+      LightBandit_23: -8136027096593766814
+      LightBandit_25: 7879160192275243311
+      LightBandit_24: -1506778517376254606
+      LightBandit_28: 5357688194466298927
+      LightBandit_33: 8329464067899960501
+      LightBandit_10: -286215300199792668
+      LightBandit_13: -5205192690280478187
+      LightBandit_8: 4707871352329790198
+      LightBandit_14: -9189121880142249697
+      LightBandit_9: 4684572714520111212
+      LightBandit_11: 7470045143188182114
+      LightBandit_18: -9147449693609385369
+      LightBandit_4: 184462397613601461
+      LightBandit_21: 6086905928091726092
+      LightBandit_26: -1871480182136569439
+      LightBandit_7: -7400165603728366334
+      LightBandit_0: 4934140306522108382
+      LightBandit_30: 4191369675846477462
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

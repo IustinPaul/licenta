@@ -15,7 +15,7 @@ public class EnemyMapExitCollider : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             m_gameC.GameStage++;
-            if(m_gameC.GameStage > 7)
+            if(m_gameC.GameStage > 4)
             {
                 m_gameC.EnemyMapExitColl.SetActive(false);
                 m_gameC.Player.transform.position = m_gameC.PlayerStartPosTown.position;

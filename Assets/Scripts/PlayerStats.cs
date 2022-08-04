@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
     [SerializeField] private Text m_statsValueTxt;
+    [SerializeField] private Text m_scoreText;
     [SerializeField] private Color m_highLife;
     [SerializeField] private Color m_mediumLife;
     [SerializeField] private Color m_lowLife;
+    [SerializeField] private AudioClip m_blockSound;
+    [SerializeField] private AudioClip m_hurtSound;
+    [SerializeField] private AudioClip m_deathSound;
 
     public float TotalLife = 100.0f;
     public float AttackDmg = 10.0f;
@@ -28,12 +33,14 @@ public class PlayerStats : MonoBehaviour
     public float Armor = 1.0f;
     public float CurrentXp = 0.0f;
     public int Level = 1;
+    public int Score = 0;
 
     private Animator m_animator;
     private RectTransform m_lifeBar;
     private RectTransform m_staminaBar;
     private RectTransform m_xpBar;
     private Image m_lifeBarImage;
+    private AudioSource m_audioSource;
 
     private float m_maxSizeLifeBar;
     private float m_maxSizeStaminaBar;
@@ -62,6 +69,7 @@ public class PlayerStats : MonoBehaviour
     void Awake()
     {
         m_animator = GetComponent<Animator>();
+        m_audioSource = GetComponent<AudioSource>();
         m_lifeBar = transform.GetChild(1).GetChild(0).GetChild(0) as RectTransform;
         m_staminaBar = transform.GetChild(1).GetChild(1).GetChild(0) as RectTransform;
         m_xpBar = transform.GetChild(1).GetChild(3).GetChild(0) as RectTransform;
@@ -78,6 +86,7 @@ public class PlayerStats : MonoBehaviour
     {
         float dt = Time.deltaTime;
         m_timeSinceDmg += dt;
+        m_scoreText.text = Score.ToString();
 
         m_currentLife += (TotalLife + m_bonusLife)*(LifeProcRegenPerSec + m_bonusLifeProcRegen) / 100.0f * dt;
         if(m_currentLife > TotalLife + m_bonusLife)
@@ -145,7 +154,8 @@ public class PlayerStats : MonoBehaviour
             m_currentLife = TotalLife + m_bonusLife;
             TotalStamina += 10.0f;
             m_currentStamina = TotalStamina + m_bonusStamina;
-            // stats uri bonus la anumite lvl
+            AttackDmg++;
+            Score += 5 * Level;
             UpdateStatsValueText();
         }
         UpdateXpBar();
@@ -157,23 +167,29 @@ public class PlayerStats : MonoBehaviour
         {
             if (m_animator.GetBool("IdleBlock"))
             {
-                m_animator.SetTrigger("AttackBlocked");
+                m_audioSource.PlayOneShot(m_blockSound);
+                //m_animator.SetTrigger("AttackBlocked");
                 m_currentStamina -= BlockStaminaCost - BlockStaminaCost * m_bonusBlockCostProc / 100.0f;
                 UpdateStaminaBar();
             }
             else
             {
-                m_currentLife -= dmg / (Armor + m_bonusArmor);
+                if(Armor+m_bonusArmor < dmg/2)
+                    m_currentLife -= (Armor + m_bonusArmor < dmg / 2 ? dmg - (Armor + m_bonusArmor) : dmg * dmg / (3* (Armor + m_bonusArmor)));
                 UpdateLifeBar();
                 m_timeSinceDmg = 0;
                 if (m_currentLife <= 0)
                 {
+                    m_audioSource.PlayOneShot(m_deathSound);
+                    m_animator.SetBool("IsDead", true);
                     m_animator.SetTrigger("Death");
+                    File.Delete(Application.persistentDataPath + "/gamesave.save");
 
                     GetComponent<PlayerController>().CanMove = false;
                 }
                 else
                 {
+                    m_audioSource.PlayOneShot(m_hurtSound);
                     m_animator.SetTrigger("Hurt");
                 }
             }
@@ -371,6 +387,12 @@ public class PlayerStats : MonoBehaviour
     public void UpdateXpBar()
     {
         m_xpBar.sizeDelta = new Vector2(m_maxSizeXpBar / XpNextLevel * CurrentXp, m_xpBar.rect.height);
+    }
+
+    public void ActivateDeathScreen()
+    {
+        transform.GetChild(1).GetChild(6).gameObject.SetActive(true);
+        transform.GetChild(1).GetChild(6).GetComponent<DeathMenuScript>().SetScore(Score);
     }
 
     private void UpdateLifeBar()

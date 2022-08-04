@@ -21,7 +21,6 @@ public class InventoryController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             m_playerController.CanMove = true;
-            Time.timeScale = 1;
             gameObject.SetActive(false);
         }
 
@@ -42,6 +41,7 @@ public class InventoryController : MonoBehaviour
                 item.Effects.Clear();
                 item.PosInInv = null;
                 SetItemInfo(item);
+                m_playerStats.Score += 10;
             }
         }
         else

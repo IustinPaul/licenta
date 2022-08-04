@@ -435,14 +435,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_baseLife: 100
-  m_baseAttack: 5
-  m_baseXpValue: 2
+  m_baseAttack: 4
+  m_baseXpValue: 3
   m_dropChance: 25
-  m_speed: 2
-  m_lifePerLevel: 5
-  m_attackPerLevel: 1
+  m_speed: 1.7
+  m_lifePerLevel: 6
+  m_attackPerLevel: 3
   m_bleedDuration: 5
   m_level: 1
+  m_score: 20
   m_itemTypes:
   - {fileID: 11400000, guid: 83974b823b3138e4680ca7e3dd79bf3d, type: 2}
   - {fileID: 11400000, guid: 909277f14add6d54e9e91977cbf58d94, type: 2}

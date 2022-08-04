@@ -83,11 +83,13 @@ public class BringerOfDeathController : MonoBehaviour
 
     public void EnableAttack1()
     {
+        m_animator.SetBool("IsAttaking", true);
         m_attackColl.enabled = true;
         m_attackColl.transform.localScale = Vector3.one;
     }
     public void DisableAttack1()
     {
+        m_animator.SetBool("IsAttaking", false);
         m_attackColl.enabled = false;
         m_attackColl.transform.localScale = Vector3.zero;
     }

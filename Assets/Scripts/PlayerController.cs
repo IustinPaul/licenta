@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private AudioClip m_swingSound;
+
     private Animator m_animator;
+    private AudioSource m_audioSource;
     private Rigidbody2D m_rbody2D;
     private SpriteRenderer m_spriteRenderer;
     private PlayerStats m_playerStats;
@@ -23,6 +26,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         m_animator = GetComponent<Animator>();
+        m_audioSource = GetComponent<AudioSource>();
         m_rbody2D = GetComponent<Rigidbody2D>();
         m_spriteRenderer = GetComponent<SpriteRenderer>();
         m_playerStats = GetComponent<PlayerStats>();
@@ -30,7 +34,7 @@ public class PlayerController : MonoBehaviour
         m_rAttack = transform.GetChild(2).GetChild(0).GetComponent<BoxCollider2D>();
         m_inventoryController = transform.GetChild(1).GetChild(2).GetComponent<InventoryController>();
         m_inventoryController.Initialized();
-        m_menu = transform.GetChild(1).GetChild(4).gameObject;
+        m_menu = transform.GetChild(1).GetChild(5).gameObject;
     }
 
     void Update()
@@ -61,7 +65,6 @@ public class PlayerController : MonoBehaviour
                 m_spriteRenderer.flipX = true;
             }
 
-            //Movement
             if ( !m_isBlocking)
             {
                 m_rbody2D.velocity = new Vector2(inputX * m_playerStats.GetPlayerSpeed(), inputY * m_playerStats.GetPlayerSpeed());
@@ -71,7 +74,7 @@ public class PlayerController : MonoBehaviour
                 m_rbody2D.velocity = Vector2.zero;
             }
             //Attack
-            if (Input.GetKeyDown(KeyCode.Space) && m_timeSienceAttack > 0.5f && !m_isRolling && m_playerStats.CanAttack())
+            if (Input.GetKeyDown(KeyCode.Space) && m_timeSienceAttack > 0.7f && !m_isRolling && m_playerStats.CanAttack())
             {
                 m_currentAttack++;
 
@@ -81,6 +84,7 @@ public class PlayerController : MonoBehaviour
                 if (m_timeSienceAttack > 1.0f)
                     m_currentAttack = 1;
 
+                m_audioSource.PlayOneShot(m_swingSound);
                 m_animator.SetTrigger("Attack" + m_currentAttack);
                 m_timeSienceAttack = 0.0f;
             }
@@ -159,6 +163,7 @@ public class PlayerController : MonoBehaviour
 
     public void EnableAttack()
     {
+        m_animator.SetBool("IsAttacking", true);
         if (m_spriteRenderer.flipX)
         {
             m_lAttack.enabled = true;
@@ -172,6 +177,7 @@ public class PlayerController : MonoBehaviour
     }
     public void DisableAttack()
     {
+        m_animator.SetBool("IsAttacking", false);
         m_rAttack.enabled = false;
         m_lAttack.enabled = false;
         m_rAttack.transform.localScale = Vector3.zero;

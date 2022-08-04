@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class Menu : MonoBehaviour
     [SerializeField] private Color m_selectColor = Color.white;
     [SerializeField] private Color m_unselectColor = Color.black;
     [SerializeField] private List<Text> m_buttons;
+    [SerializeField] private GameObject m_errorText;
 
     private int m_selectedIndex = 0;
 
@@ -47,10 +49,19 @@ public class Menu : MonoBehaviour
             {
                 case 0:
                     gameObject.SetActive(false);
+                    m_errorText.SetActive(false);
                     break;
                 case 1:
-                    PlayerPrefs.SetInt("IsLoaded", 1);
-                    SceneManager.LoadScene(1);
+                    if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
+                    {
+                        PlayerPrefs.SetInt("IsLoaded", 1);
+                        SceneManager.LoadScene(1);
+                    }
+                    else
+                    {
+                        m_errorText.SetActive(true);
+                        Time.timeScale = 0;
+                    }
                     break;
                 case 2:
                     SceneManager.LoadScene(0);

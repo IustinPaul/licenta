@@ -85,13 +85,15 @@ public class MushroomController : MonoBehaviour
     }
     public void EnableAttack()
     {
+        m_animator.SetBool("IsAttaking", true);
         m_attackColl.enabled = true;
         m_attackColl.transform.localScale = Vector3.one;
-        if (Mathf.Abs((m_player.position.x + m_direction) - transform.position.x) < Mathf.Abs(m_direction) / 2.0f)
-            m_player.GetComponent<Rigidbody2D>().velocity = new Vector2(-m_direction*m_knockbackPower, 0);
+        //if (Mathf.Abs((m_player.position.x + m_direction) - transform.position.x) < Mathf.Abs(m_direction) / 2.0f)
+        //    m_player.GetComponent<Rigidbody2D>().velocity = new Vector2(-m_direction*m_knockbackPower, 0);
     }
     public void DisableAttack()
     {
+        m_animator.SetBool("IsAttaking", false);
         m_attackColl.enabled = false;
         m_attackColl.transform.localScale = Vector3.zero;
     }

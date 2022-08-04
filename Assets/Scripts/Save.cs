@@ -23,5 +23,6 @@ public class Save
     public float CurrentXp;
     public float Armor;
     public int Level;
+    public int Score;
     public List<SaveItem> Items = new List<SaveItem>();
 }

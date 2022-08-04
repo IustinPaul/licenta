@@ -48,11 +48,15 @@ public class FlyingEyeController : MonoBehaviour
         float moveX = (m_player.position.x + m_direction) - transform.position.x;
         float moveY = m_player.position.y - transform.position.y;
 
-        if (Mathf.Abs(moveX) <= 0.1 && Mathf.Abs(moveY) <= 0.1)
+        if (Mathf.Abs(moveX) <= 4 && Mathf.Abs(moveY) <= 4)
         {
             m_shouldMove = false;
         }
-        if (m_shouldMove && m_timeSinceAttack >= 4.0f)
+        else
+        {
+            m_shouldMove = true;
+        }
+        if ((Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f) && m_timeSinceAttack >= 4.0f)
         {
             m_animator.SetTrigger("Attack2");
             m_timeSinceAttack = 0;
@@ -66,11 +70,7 @@ public class FlyingEyeController : MonoBehaviour
             m_rbody2D.velocity = Vector2.zero;
             if (!m_isDead)
             {
-                if (Mathf.Abs(moveX) >= Mathf.Abs(m_direction) / 2.0f || Mathf.Abs(moveY) >= 0.1f)
-                {
-                    m_shouldMove = true;
-                }
-                else if (m_timeSinceAttack >= 3.0f)
+                if (Mathf.Abs(moveX) <= 0.5f && Mathf.Abs(moveY) <= 0.2f && m_timeSinceAttack >= 3.0f)
                 {
                     m_animator.SetTrigger("Attack1");
                     m_timeSinceAttack = 0;
@@ -81,11 +81,13 @@ public class FlyingEyeController : MonoBehaviour
 
     public void EnableAttack1()
     {
+        m_animator.SetBool("IsAttaking", true);
         m_attackColl.enabled = true;
         m_attackColl.transform.localScale = Vector3.one;
     }
     public void DisableAttack1()
     {
+        m_animator.SetBool("IsAttaking", false);
         m_attackColl.enabled = false;
         m_attackColl.transform.localScale = Vector3.zero;
     }

@@ -77,11 +77,13 @@ public class BanditController : MonoBehaviour
     }
     public void EnableAttack()
     {
+        m_animator.SetBool("IsAttaking", true);
         m_attackColl.enabled = true;
         m_attackColl.transform.localScale = Vector3.one;
     }
     public void DisableAttack()
     {
+        m_animator.SetBool("IsAttaking", false);
         m_attackColl.enabled = false;
         m_attackColl.transform.localScale = Vector3.zero;
     }

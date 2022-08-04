@@ -87,21 +87,25 @@ public class GoblinController : MonoBehaviour
     
     public void EnableAttack1()
     {
+        m_animator.SetBool("IsAttaking", true);
         m_attack1Coll.enabled = true;
         m_attack1Coll.transform.localScale = Vector3.one;
     }
     public void DisableAttack1()
     {
+        m_animator.SetBool("IsAttaking", false);
         m_attack1Coll.enabled = false;
         m_attack1Coll.transform.localScale = Vector3.zero;
     }
     public void EnableAttack2()
     {
+        m_animator.SetBool("IsAttaking", true);
         m_attack2Coll.enabled = true;
         m_attack2Coll.transform.localScale = Vector3.one;
     }
     public void DisableAttack2()
     {
+        m_animator.SetBool("IsAttaking", false);
         m_attack2Coll.enabled = false;
         m_attack2Coll.transform.localScale = Vector3.zero;
     }

@@ -15,27 +15,27 @@ MonoBehaviour:
   ItemType: Chest
   BaseStats:
   - ApplyTo: Armor
-    Amount: 2
+    Amount: 1
   - ApplyTo: Life
     Amount: 5
   Sprites:
   - {fileID: -488721925442295091, guid: 7c6a138393e3e4a48927c333df194f6a, type: 3}
   Effects:
   - ApplyTo: Armor
-    Amount: 10
+    Amount: 1
   - ApplyTo: Armor
     Amount: 0.5%
   - ApplyTo: Life
-    Amount: 10
+    Amount: 5
   - ApplyTo: Life
     Amount: 0.5%
   - ApplyTo: Stamina
-    Amount: 10
+    Amount: 5
   - ApplyTo: Stamina
     Amount: 0.5%
   - ApplyTo: Invulnerability
     Amount: 0.5%
   - ApplyTo: Life Regen
-    Amount: 0.5%
+    Amount: 0.1%
   - ApplyTo: Stamina Regen
-    Amount: 0.5%
+    Amount: 0.1%

@@ -22,15 +22,15 @@ MonoBehaviour:
   - {fileID: 4639506938558671751, guid: 7c6a138393e3e4a48927c333df194f6a, type: 3}
   Effects:
   - ApplyTo: Armor
-    Amount: 10
+    Amount: 1
   - ApplyTo: Armor
     Amount: 0.5%
   - ApplyTo: Life
-    Amount: 10
+    Amount: 5
   - ApplyTo: Life
     Amount: 0.5%
   - ApplyTo: Stamina
-    Amount: 10
+    Amount: 5
   - ApplyTo: Stamina
     Amount: 0.5%
   - ApplyTo: Attack Cost

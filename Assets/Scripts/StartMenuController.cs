@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,6 +11,8 @@ public class StartMenuController : MonoBehaviour
     [SerializeField] private Color m_unselectColor = Color.black;
     [SerializeField] private List<Text> m_buttons;
     [SerializeField] private GameObject nextScreen;
+    [SerializeField] private GameObject m_errorText;
+    [SerializeField] private GameObject m_hallOfFame;
 
     private int m_selectedIndex = 0;
     private void Awake()
@@ -46,10 +49,22 @@ public class StartMenuController : MonoBehaviour
                     gameObject.SetActive(false);
                     break;
                 case 1:
-                    PlayerPrefs.SetInt("IsLoaded", 1);
-                    SceneManager.LoadScene(1);
+                    if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
+                    {
+                        PlayerPrefs.SetInt("IsLoaded", 1);
+                        SceneManager.LoadScene(1);
+                    }
+                    else
+                    {
+                        m_errorText.SetActive(true);
+                    }
                     break;
                 case 2:
+                    m_hallOfFame.SetActive(true);
+                    m_errorText.SetActive(false);
+                    gameObject.SetActive(false);
+                    break;
+                case 3:
                     Application.Quit();
                     break;
                 default:

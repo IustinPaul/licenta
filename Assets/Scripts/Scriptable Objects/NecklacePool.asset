@@ -22,11 +22,11 @@ MonoBehaviour:
   - {fileID: -7855203551248514480, guid: 7c6a138393e3e4a48927c333df194f6a, type: 3}
   Effects:
   - ApplyTo: Life
-    Amount: 10
+    Amount: 5
   - ApplyTo: Life
     Amount: 0.5%
   - ApplyTo: Stamina
-    Amount: 10
+    Amount: 5
   - ApplyTo: Stamina
     Amount: 0.5%
   - ApplyTo: Invulnerability
@@ -34,9 +34,9 @@ MonoBehaviour:
   - ApplyTo: Roll Cost
     Amount: 0.5%
   - ApplyTo: Life Regen
-    Amount: 0.5%
+    Amount: 0.1%
   - ApplyTo: Stamina Regen
-    Amount: 0.5%
+    Amount: 0.1%
   - ApplyTo: Attack Cost
     Amount: 0.5%
   - ApplyTo: Thorns
